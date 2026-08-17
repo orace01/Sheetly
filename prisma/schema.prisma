@@ -1,0 +1,147 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Plan {
+  FREE
+  STARTER
+  CABINET
+}
+
+enum DocumentStatus {
+  PENDING
+  PROCESSING
+  EXTRACTED
+  ERROR
+}
+
+enum DocumentType {
+  INVOICE
+  RECEIPT
+  BANK_STATEMENT
+  PURCHASE_ORDER
+  OTHER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  plan         Plan     @default(FREE)
+  createdAt    DateTime @default(now())
+
+  sessions        Session[]
+  documents       Document[]
+  vendorMappings  VendorMapping[]
+  exportTemplates ExportTemplate[]
+  usageRecords    UsageRecord[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Document {
+  id           String         @id @default(cuid())
+  userId       String
+  originalName String
+  storagePath  String
+  mimeType     String
+  fileSize     Int
+  status       DocumentStatus @default(PENDING)
+  errorMessage String?
+  batchId      String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  extraction Extraction?
+
+  @@index([userId, status])
+  @@index([userId, batchId])
+}
+
+model Extraction {
+  id         String   @id @default(cuid())
+  documentId String   @unique
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  documentType  DocumentType @default(OTHER)
+  vendorName    String?
+  invoiceNumber String?
+  documentDate  String? // ISO date string YYYY-MM-DD
+  currency      String       @default("EUR")
+  amountHt      Float?
+  vatRate       Float?
+  vatAmount     Float?
+  amountTtc     Float?
+  category      String?
+  accountCode   String?
+  accountLabel  String?
+  confidence    Float?
+  rawFields     String? // JSON blob: full LLM structured output (line items, notes, etc.)
+
+  integrityOk    Boolean @default(true)
+  integrityDelta Float?
+
+  isDuplicate   Boolean @default(false)
+  duplicateOfId String?
+
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([documentId])
+}
+
+model VendorMapping {
+  id           String   @id @default(cuid())
+  userId       String
+  vendorKey    String // normalized vendor name (lowercase, trimmed, accents stripped)
+  vendorName   String // original-casing display name (most recent seen)
+  accountCode  String
+  accountLabel String?
+  timesUsed    Int      @default(1)
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vendorKey])
+}
+
+model ExportTemplate {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  columns   String // JSON array of { field: string, header: string }, in export order
+  format    String   @default("xlsx") // "xlsx" | "csv"
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+}
+
+model UsageRecord {
+  id        String @id @default(cuid())
+  userId    String
+  periodKey String // e.g. "2026-08"
+  count     Int    @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, periodKey])
+}
