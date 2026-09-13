@@ -340,7 +340,7 @@ export default function Home() {
                 letterSpacing: "0.02em",
               }}
             >
-              Gratuit jusqu&apos;à 50 documents · Aucune carte de crédit requise
+              Gratuit jusqu&apos;à {PLAN_DETAILS.FREE.docsIncluded} documents · Aucune carte de crédit requise
             </p>
           </div>
         </section>
@@ -704,7 +704,8 @@ export default function Home() {
               Prêt à ne plus ressaisir vos factures à la main ?
             </h2>
             <p style={{ fontSize: "0.9375rem", color: "rgba(255,255,255,0.65)", marginBottom: "2rem" }}>
-              Créez votre compte gratuit et traitez vos 50 premiers documents dès aujourd&apos;hui.
+              Créez votre compte gratuit et traitez vos {PLAN_DETAILS.FREE.docsIncluded} premiers documents dès
+              aujourd&apos;hui.
             </p>
             <Link href="/register" className="btn-lime" style={{ padding: "0.75rem 1.75rem", fontSize: "1rem" }}>
               Commencer gratuitement →
