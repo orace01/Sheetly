@@ -14,11 +14,11 @@ const STATUS_LABEL: Record<string, string> = {
   ERROR: "Erreur",
 };
 
-const STATUS_COLOR: Record<string, string> = {
-  PENDING: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300",
-  PROCESSING: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  EXTRACTED: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
-  ERROR: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+const STATUS_CLASS: Record<string, string> = {
+  PENDING: "badge badge-muted",
+  PROCESSING: "badge badge-blue",
+  EXTRACTED: "badge badge-green",
+  ERROR: "badge badge-red",
 };
 
 const DOCUMENT_TYPE_LABEL: Record<string, string> = {
@@ -128,7 +128,7 @@ export function DocumentsClient({
         }
 
         await runExtractionQueue(newDocs.map((d) => d.id));
-        router.refresh(); // usage badge in the layout is a server snapshot — refresh it
+        router.refresh();
       } catch {
         setUploading(false);
         setError("Échec de l'envoi.");
@@ -154,14 +154,25 @@ export function DocumentsClient({
   const groups = groupDocuments(documents, groupBy);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-white">Documents</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+      {/* ── Page header ── */}
+      <div className="anim-fade-up">
+        <h1
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+            color: "var(--forest)",
+          }}
+        >
+          Documents
+        </h1>
+        <p style={{ marginTop: "0.25rem", fontSize: "0.875rem", color: "var(--text-muted)" }}>
           Glissez vos factures, reçus, relevés bancaires ou un dossier .zip.
         </p>
       </div>
 
+      {/* ── Drop zone ── */}
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -170,46 +181,97 @@ export function DocumentsClient({
         onDragLeave={() => setIsDragging(false)}
         onDrop={onDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-16 text-center transition-colors ${
-          isDragging
-            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30"
-            : "border-zinc-300 hover:border-indigo-400 dark:border-zinc-700"
-        }`}
+        className={`anim-fade-up anim-delay-1 ${isDragging ? "dropzone-active" : ""}`}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.5rem",
+          borderRadius: "1rem",
+          border: `2px dashed ${isDragging ? "var(--lime)" : "var(--mint-border)"}`,
+          background: isDragging ? "var(--lime-pale)" : "#fff",
+          padding: "4rem 2rem",
+          cursor: "pointer",
+          textAlign: "center",
+          transition: "border-color 200ms, background 200ms",
+        }}
       >
         <input
           ref={fileInputRef}
           type="file"
           multiple
           accept=".pdf,.jpg,.jpeg,.png,.webp,.zip,application/pdf,image/*,application/zip"
-          className="hidden"
+          style={{ display: "none" }}
           onChange={(e) => e.target.files && void handleFiles(e.target.files)}
         />
-        <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {uploading
-            ? "Envoi en cours..."
-            : "Déposez vos fichiers ici, ou cliquez pour parcourir"}
+
+        {/* Upload icon */}
+        <div
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: "1rem",
+            background: isDragging ? "var(--lime)" : "var(--lime-pale)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "1.5rem",
+            marginBottom: "0.5rem",
+            transition: "background 200ms",
+          }}
+        >
+          {uploading ? "⏳" : "📄"}
+        </div>
+
+        <p style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--forest)" }}>
+          {uploading ? "Envoi en cours..." : "Déposez vos fichiers ici, ou cliquez pour parcourir"}
         </p>
-        <p className="mt-1 text-xs text-zinc-500">PDF, JPG, PNG, WEBP ou un dossier .zip</p>
+        <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
+          PDF, JPG, PNG, WEBP ou un dossier .zip
+        </p>
       </div>
 
+      {/* ── Error banner ── */}
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+        <div
+          className="badge-red"
+          style={{
+            borderRadius: "0.75rem",
+            padding: "0.75rem 1rem",
+            fontSize: "0.875rem",
+            background: "#fee2e2",
+            color: "#991b1b",
+          }}
+        >
           {error}
-        </p>
+        </div>
       )}
 
+      {/* ── Group selector ── */}
       {documents.length > 0 && (
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-zinc-500">Grouper par :</span>
+        <div
+          className="anim-fade-up anim-delay-2"
+          style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}
+        >
+          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 500 }}>
+            Grouper par :
+          </span>
           {GROUP_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setGroupBy(opt.value)}
-              className={`rounded-full px-3 py-1 ${
-                groupBy === opt.value
-                  ? "bg-indigo-600 text-white"
-                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-400"
-              }`}
+              style={{
+                padding: "0.25rem 0.875rem",
+                borderRadius: 99,
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                cursor: "pointer",
+                border: groupBy === opt.value ? "none" : "1.5px solid var(--mint-border)",
+                background: groupBy === opt.value ? "var(--forest)" : "#fff",
+                color: groupBy === opt.value ? "#fff" : "var(--text-mid)",
+                transition: "background 150ms, color 150ms, border-color 150ms",
+              }}
             >
               {opt.label}
             </button>
@@ -217,25 +279,69 @@ export function DocumentsClient({
         </div>
       )}
 
-      <div className="space-y-8">
+      {/* ── Document list ── */}
+      <div
+        className="anim-fade-up anim-delay-3"
+        style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
+      >
         {groups.map(([groupLabel, docs]) => (
           <div key={groupLabel}>
             {groupBy !== "none" && (
-              <h2 className="mb-3 text-sm font-semibold text-zinc-500">{groupLabel}</h2>
+              <h2
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  color: "var(--text-muted)",
+                  marginBottom: "0.75rem",
+                }}
+              >
+                {groupLabel}
+              </h2>
             )}
-            <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
+            <div
+              className="card"
+              style={{ overflow: "hidden", padding: 0 }}
+            >
               {docs.map((doc, idx) => (
                 <div
                   key={doc.id}
-                  className={`flex items-center justify-between gap-4 px-4 py-3 ${
-                    idx > 0 ? "border-t border-zinc-200 dark:border-zinc-800" : ""
-                  } bg-white dark:bg-zinc-950`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                    padding: "0.875rem 1.25rem",
+                    borderTop: idx > 0 ? "1px solid var(--mint-border)" : "none",
+                    background: "#fff",
+                    transition: "background 150ms",
+                  }}
+                  className="doc-row"
                 >
-                  <Link href={`/documents/${doc.id}`} className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-zinc-900 dark:text-white">
+                  <Link href={`/documents/${doc.id}`} style={{ minWidth: 0, flex: 1, textDecoration: "none" }}>
+                    <p
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        color: "var(--forest)",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {doc.extraction?.vendorName || doc.originalName}
                     </p>
-                    <p className="mt-0.5 truncate text-xs text-zinc-500">
+                    <p
+                      style={{
+                        marginTop: "0.125rem",
+                        fontSize: "0.75rem",
+                        color: "var(--text-muted)",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {doc.originalName}
                       {doc.extraction?.documentDate ? ` · ${doc.extraction.documentDate}` : ""}
                       {doc.extraction?.amountTtc != null
@@ -243,25 +349,30 @@ export function DocumentsClient({
                         : ""}
                     </p>
                   </Link>
-                  <div className="flex shrink-0 items-center gap-2">
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
                     {doc.extraction && !doc.extraction.integrityOk && (
-                      <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/40 dark:text-red-300">
-                        HT+TVA≠TTC
-                      </span>
+                      <span className="badge badge-red">HT+TVA≠TTC</span>
                     )}
                     {doc.extraction?.isDuplicate && (
-                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
-                        Doublon
-                      </span>
+                      <span className="badge badge-amber">Doublon</span>
                     )}
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLOR[doc.status]}`}
-                    >
+                    <span className={STATUS_CLASS[doc.status] ?? "badge badge-muted"}>
                       {STATUS_LABEL[doc.status]}
                     </span>
                     <button
                       onClick={() => handleDelete(doc.id)}
-                      className="text-xs text-zinc-400 hover:text-red-600"
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "var(--text-light)",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "0.25rem 0.5rem",
+                        borderRadius: "0.375rem",
+                        transition: "color 150ms, background 150ms",
+                      }}
+                      className="delete-btn"
                     >
                       Supprimer
                     </button>
@@ -271,12 +382,25 @@ export function DocumentsClient({
             </div>
           </div>
         ))}
+
         {documents.length === 0 && (
-          <p className="py-12 text-center text-sm text-zinc-500">
+          <p
+            style={{
+              padding: "3rem",
+              textAlign: "center",
+              fontSize: "0.875rem",
+              color: "var(--text-muted)",
+            }}
+          >
             Aucun document pour l&apos;instant.
           </p>
         )}
       </div>
+
+      <style>{`
+        .doc-row:hover { background: var(--mint-bg) !important; }
+        .delete-btn:hover { color: #991b1b !important; background: #fee2e2 !important; }
+      `}</style>
     </div>
   );
 }

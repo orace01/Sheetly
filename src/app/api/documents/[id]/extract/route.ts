@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { readStoredFile } from "@/lib/storage";
 import { preprocessImage } from "@/lib/extraction/preprocess";
-import { extractDocumentFields } from "@/lib/extraction/claude";
+import { extractDocumentFields } from "@/lib/extraction/gemini";
 import { checkIntegrity } from "@/lib/rules/integrity";
 import { findDuplicate } from "@/lib/rules/duplicates";
 import { suggestAccountForVendor } from "@/lib/rules/accountMapping";

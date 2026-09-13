@@ -96,7 +96,7 @@ export async function POST(request: Request) {
         batchId,
       },
     });
-    const storagePath = await saveFile(user.id, doc.id, item.filename, item.data);
+    const storagePath = await saveFile(user.id, doc.id, item.filename, item.data, item.mimeType);
     const updated = await db.document.update({ where: { id: doc.id }, data: { storagePath } });
     created.push(updated);
   }

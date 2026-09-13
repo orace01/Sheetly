@@ -31,21 +31,103 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 dark:bg-black">
-      <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1.5rem",
+        background: "var(--mint-bg)",
+        minHeight: "100vh",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background decoration */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "45%",
+          background: "var(--forest)",
+          zIndex: 0,
+        }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: "-10%",
+          right: "-5%",
+          width: 400,
+          height: 400,
+          background: "radial-gradient(circle, rgba(61,220,132,0.2) 0%, transparent 70%)",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Card */}
+      <div
+        className="anim-fade-up card"
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          background: "#fff",
+          borderRadius: "1.25rem",
+          padding: "2.5rem",
+          position: "relative",
+          zIndex: 2,
+          boxShadow: "0 8px 40px rgba(11,61,46,0.15)",
+        }}
+      >
+        {/* Brand */}
         <Link
           href="/"
-          className="mb-6 block text-lg font-semibold text-zinc-900 dark:text-white"
+          style={{
+            display: "block",
+            fontSize: "1.25rem",
+            fontWeight: 700,
+            color: "var(--forest)",
+            textDecoration: "none",
+            letterSpacing: "-0.02em",
+            marginBottom: "1.75rem",
+          }}
         >
           Sheetly
         </Link>
-        <h1 className="mb-1 text-xl font-semibold text-zinc-900 dark:text-white">
+
+        <h1
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+            color: "var(--forest)",
+            marginBottom: "0.375rem",
+          }}
+        >
           Connexion
         </h1>
-        <p className="mb-6 text-sm text-zinc-500">Accédez à votre espace Sheetly.</p>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", marginBottom: "2rem" }}>
+          Accédez à votre espace Sheetly.
+        </p>
+
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label
+              style={{
+                display: "block",
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                color: "var(--text-dark)",
+                marginBottom: "0.375rem",
+                letterSpacing: "0.01em",
+              }}
+            >
               Email
             </label>
             <input
@@ -54,11 +136,22 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+              placeholder="vous@exemple.com"
+              className="input-field"
             />
           </div>
+
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label
+              style={{
+                display: "block",
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                color: "var(--text-dark)",
+                marginBottom: "0.375rem",
+                letterSpacing: "0.01em",
+              }}
+            >
               Mot de passe
             </label>
             <input
@@ -67,25 +160,68 @@ export default function LoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+              placeholder="••••••••"
+              className="input-field"
             />
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          {error && (
+            <div
+              style={{
+                borderRadius: "0.625rem",
+                padding: "0.625rem 0.875rem",
+                fontSize: "0.8rem",
+                background: "#fee2e2",
+                color: "#991b1b",
+                fontWeight: 500,
+              }}
+            >
+              {error}
+            </div>
+          )}
+
           <button
             type="submit"
+            id="login-submit"
             disabled={loading}
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
+            className="btn-primary"
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              padding: "0.75rem",
+              fontSize: "0.9rem",
+              marginTop: "0.25rem",
+              opacity: loading ? 0.6 : 1,
+            }}
           >
-            {loading ? "Connexion..." : "Se connecter"}
+            {loading ? "Connexion en cours..." : "Se connecter →"}
           </button>
         </form>
-        <p className="mt-6 text-center text-sm text-zinc-500">
+
+        <div
+          style={{
+            marginTop: "1.75rem",
+            paddingTop: "1.5rem",
+            borderTop: "1px solid var(--mint-border)",
+            textAlign: "center",
+            fontSize: "0.875rem",
+            color: "var(--text-muted)",
+          }}
+        >
           Pas encore de compte ?{" "}
-          <Link href="/register" className="font-medium text-indigo-600 hover:underline">
+          <Link
+            href="/register"
+            style={{ fontWeight: 600, color: "var(--forest)", textDecoration: "none" }}
+            className="register-link"
+          >
             Créer un compte
           </Link>
-        </p>
+        </div>
       </div>
+
+      <style>{`
+        .register-link:hover { text-decoration: underline; }
+      `}</style>
     </div>
   );
 }

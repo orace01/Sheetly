@@ -2,18 +2,22 @@
 
 Sheetly transforme des dossiers de pièces comptables (factures, reçus, relevés
 bancaires, bons de commande) en données structurées prêtes à l'export : glissez
-vos PDF/images (ou un `.zip`), Claude Vision extrait les champs clés, un moteur
+vos PDF/images (ou un `.zip`), Gemini Vision extrait les champs clés, un moteur
 de règles vérifie leur cohérence, et vous exportez un Excel/CSV sur mesure.
 
 ## Stack
 
 - **Next.js 16** (App Router, Turbopack), TypeScript, Tailwind CSS v4
-- **SQLite** via **Prisma 7** (driver adapter `@prisma/adapter-better-sqlite3`)
+- **Supabase Postgres** via **Prisma 7** (driver adapter `@prisma/adapter-pg`,
+  connexion poolée pour le runtime, connexion directe pour les migrations)
+- **Supabase Storage** pour les fichiers uploadés (bucket privé `documents`,
+  accès uniquement via nos routes API authentifiées, jamais d'URL publique)
 - **Auth maison** : mot de passe hashé (bcrypt) + jeton de session opaque
   stocké hashé en base et posé en cookie httpOnly (pas de dépendance type
   NextAuth)
-- **Anthropic SDK** (`@anthropic-ai/sdk`) pour l'extraction multimodale
-  (Claude Vision lit directement les PDF et images — pas d'étape OCR séparée)
+- **Google Gen AI SDK** (`@google/genai`, API Interactions) pour l'extraction
+  multimodale (Gemini lit directement les PDF et images — pas d'étape OCR
+  séparée), avec sortie JSON contrainte par schéma (`response_format`)
 - **sharp** pour le prétraitement d'image, **adm-zip** pour les dossiers
   compressés, **exceljs** pour l'export Excel
 
@@ -21,10 +25,24 @@ de règles vérifie leur cohérence, et vous exportez un Excel/CSV sur mesure.
 
 ```bash
 npm install
-cp .env.example .env   # puis renseignez ANTHROPIC_API_KEY
+cp .env.example .env   # renseignez les identifiants Supabase + GEMINI_API_KEY
 npx prisma migrate dev
 npm run dev
 ```
+
+### Déploiement (Vercel + Supabase)
+
+L'app est conçue pour tourner sur une plateforme serverless comme Vercel :
+la base de données (Postgres) et les fichiers uploadés (Storage) vivent tous
+les deux sur Supabase plutôt que sur le disque local, qui est éphémère en
+serverless. Dans les paramètres du projet Vercel, ajoutez ces variables
+d'environnement (mêmes valeurs que dans votre `.env` local) :
+
+`DATABASE_URL`, `DIRECT_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
+`SUPABASE_STORAGE_BUCKET`, `GEMINI_API_KEY`, `GEMINI_MODEL`.
+
+Le bucket Supabase Storage (`documents`, privé) doit exister avant le premier
+déploiement — voir `src/lib/storage.ts`.
 
 L'app tourne sur http://localhost:3000. Un compte gratuit (20 documents/mois)
 se crée directement sur `/register`.
@@ -38,13 +56,11 @@ src/app/
   login/, register/      # pages publiques
 src/lib/
   auth.ts, db.ts, storage.ts, quotas.ts, constants.ts
-  extraction/            # appel Claude Vision + prétraitement sharp
+  extraction/            # appel Gemini Vision + prétraitement sharp
   rules/                 # intégrité HT+TVA=TTC, doublons, mapping comptable
   export/                # génération XLSX/CSV
 prisma/schema.prisma      # User, Session, Document, Extraction, VendorMapping,
                            # ExportTemplate, UsageRecord
-storage/                  # fichiers uploadés (hors dépôt), servis via une
-                           # route API authentifiée — jamais depuis /public
 ```
 
 ## Choix d'implémentation et simplifications (v1)
@@ -54,7 +70,7 @@ ils sont documentés ici plutôt que laissés implicites.
 
 - **Prétraitement image** : rotation EXIF + normalisation de contraste
   (`sharp`), sans redressement géométrique complet (perspective/Hough) des
-  photos inclinées — Claude Vision lit nativement des documents modérément
+  photos inclinées — Gemini Vision lit nativement des documents modérément
   inclinés ou ombrés, donc ce n'est pas bloquant pour une v1.
 - **Mapping comptable "apprenant"** : un dictionnaire fournisseur → code
   comptable, alimenté à chaque validation utilisateur (`VendorMapping`), pas
@@ -67,11 +83,9 @@ ils sont documentés ici plutôt que laissés implicites.
 - **Traitement asynchrone** : pas de file d'attente/worker. L'extraction est
   déclenchée par le client après l'upload, avec une concurrence limitée
   (3 documents en parallèle) plutôt qu'en tâche de fond côté serveur.
-- **Stockage fichiers** : disque local sous `storage/`. Pour un déploiement
-  multi-instance, remplacer par un stockage objet (S3-compatible).
-- **Modèle Claude** : `claude-opus-5` par défaut (précision maximale),
-  réglable via `ANTHROPIC_MODEL` — pertinent puisque Sheetly facture au
-  document et que la marge dépend du coût d'extraction.
+- **Modèle Gemini** : `gemini-3.8-flash` par défaut (bon rapport coût/
+  précision), réglable via `GEMINI_MODEL` — pertinent puisque Sheetly facture
+  au document et que la marge dépend du coût d'extraction.
 
 ## Roadmap
 

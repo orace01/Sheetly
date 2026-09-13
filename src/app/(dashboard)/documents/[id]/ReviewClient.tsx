@@ -54,10 +54,6 @@ function num(value: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function inputClass() {
-  return "w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white";
-}
-
 export function ReviewClient({
   document,
   accountSuggestions,
@@ -71,6 +67,7 @@ export function ReviewClient({
   const [saving, setSaving] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"success" | "error">("success");
 
   const liveIntegrity = useMemo(
     () => checkIntegrity(num(form.amountHt), num(form.vatAmount), num(form.amountTtc)),
@@ -104,12 +101,14 @@ export function ReviewClient({
     });
     setSaving(false);
     if (!res.ok) {
+      setMessageType("error");
       setMessage("Échec de l'enregistrement.");
       return;
     }
     const data = await res.json();
     setDoc((prev) => ({ ...prev, extraction: data.extraction }));
-    setMessage("Enregistré.");
+    setMessageType("success");
+    setMessage("Enregistré avec succès ✓");
   }
 
   async function handleReExtract() {
@@ -118,234 +117,397 @@ export function ReviewClient({
     const res = await fetch(`/api/documents/${doc.id}/extract`, { method: "POST" });
     const data = await res.json();
     setExtracting(false);
-    router.refresh(); // usage badge in the layout is a server snapshot — refresh it
+    router.refresh();
     if (!res.ok) {
       setDoc((prev) => ({ ...prev, status: "ERROR" }));
+      setMessageType("error");
       setMessage(data.error ?? "Échec de l'extraction.");
       return;
     }
     setDoc((prev) => ({ ...prev, status: "EXTRACTED", extraction: data.extraction }));
     setForm(toFormState(data.extraction));
-    setMessage("Extraction relancée.");
+    setMessageType("success");
+    setMessage("Extraction relancée ✓");
   }
 
   const isPdf = doc.mimeType === "application/pdf";
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col">
-      <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-3 dark:border-zinc-800">
-        <div className="min-w-0">
-          <Link href="/documents" className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+    <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 60px)" }}>
+      {/* ── Toolbar ─────────────────────────────────────────── */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "1rem",
+          padding: "0.875rem 1.5rem",
+          background: "#fff",
+          borderBottom: "1.5px solid var(--mint-border)",
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <Link
+            href="/documents"
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              color: "var(--text-muted)",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.25rem",
+              marginBottom: "0.125rem",
+            }}
+            className="back-link"
+          >
             ← Documents
           </Link>
-          <p className="truncate text-sm font-medium text-zinc-900 dark:text-white">
+          <p
+            style={{
+              fontSize: "0.9rem",
+              fontWeight: 600,
+              color: "var(--forest)",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: 400,
+            }}
+          >
             {doc.originalName}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {message && <span className="text-sm text-zinc-500">{message}</span>}
+
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+          {message && (
+            <span
+              style={{
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                color: messageType === "success" ? "var(--forest)" : "#991b1b",
+                padding: "0.25rem 0.75rem",
+                borderRadius: 99,
+                background: messageType === "success" ? "var(--lime-pale)" : "#fee2e2",
+              }}
+            >
+              {message}
+            </span>
+          )}
+
           <button
             onClick={handleReExtract}
             disabled={extracting}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+            className="btn-ghost"
+            style={{ padding: "0.5rem 1rem", opacity: extracting ? 0.6 : 1 }}
           >
             {extracting ? "Extraction..." : "Relancer l'extraction"}
           </button>
+
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
+            className="btn-primary"
+            style={{ padding: "0.5rem 1.25rem", opacity: saving ? 0.6 : 1 }}
           >
             {saving ? "Enregistrement..." : "Enregistrer"}
           </button>
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="w-1/2 border-r border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
+      {/* ── Split view ─────────────────────────────────────── */}
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        {/* Left – document viewer */}
+        <div
+          style={{
+            width: "50%",
+            borderRight: "1.5px solid var(--mint-border)",
+            background: "var(--mint-soft)",
+            flexShrink: 0,
+          }}
+        >
           {isPdf ? (
-            <iframe src={`/api/documents/${doc.id}/file`} className="h-full w-full" title={doc.originalName} />
+            <iframe
+              src={`/api/documents/${doc.id}/file`}
+              style={{ width: "100%", height: "100%", border: "none" }}
+              title={doc.originalName}
+            />
           ) : (
-            <div className="flex h-full items-center justify-center overflow-auto p-4">
+            <div
+              style={{
+                display: "flex",
+                height: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "auto",
+                padding: "1.5rem",
+              }}
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`/api/documents/${doc.id}/file`}
                 alt={doc.originalName}
-                className="max-h-full max-w-full rounded shadow"
+                style={{
+                  maxHeight: "100%",
+                  maxWidth: "100%",
+                  borderRadius: "0.75rem",
+                  boxShadow: "0 4px 24px rgba(11,61,46,0.12)",
+                }}
               />
             </div>
           )}
         </div>
 
-        <div className="w-1/2 overflow-y-auto px-6 py-6">
-          <div className="space-y-4">
+        {/* Right – extraction form */}
+        <div
+          style={{
+            width: "50%",
+            overflowY: "auto",
+            padding: "1.5rem",
+            background: "var(--mint-bg)",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {/* Integrity alert */}
             {!liveIntegrity.integrityOk && (
-              <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
-                HT + TVA ≠ TTC (écart de {liveIntegrity.integrityDelta?.toFixed(2)})
+              <div
+                style={{
+                  borderRadius: "0.75rem",
+                  padding: "0.75rem 1rem",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  background: "#fee2e2",
+                  color: "#991b1b",
+                  border: "1px solid #fca5a5",
+                }}
+              >
+                ⚠️ HT + TVA ≠ TTC (écart de {liveIntegrity.integrityDelta?.toFixed(2)})
               </div>
             )}
+
+            {/* Duplicate alert */}
             {doc.extraction?.isDuplicate && (
-              <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
-                Doublon potentiel : un document avec le même N° facture, la même date et le
-                même montant TTC existe déjà.
+              <div
+                style={{
+                  borderRadius: "0.75rem",
+                  padding: "0.75rem 1rem",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  background: "#fef3c7",
+                  color: "#92400e",
+                  border: "1px solid #fde68a",
+                }}
+              >
+                ⚠️ Doublon potentiel : un document avec le même N° facture, la même date et le même
+                montant TTC existe déjà.
               </div>
             )}
+
+            {/* Confidence */}
             {doc.extraction?.confidence != null && (
-              <p className="text-xs text-zinc-400">
-                Confiance du modèle : {Math.round(doc.extraction.confidence * 100)}%
-              </p>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                  Confiance du modèle :
+                </span>
+                <div
+                  style={{
+                    flex: 1,
+                    height: 4,
+                    background: "var(--mint-border)",
+                    borderRadius: 99,
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "100%",
+                      width: `${Math.round(doc.extraction.confidence * 100)}%`,
+                      background: "var(--lime)",
+                      borderRadius: 99,
+                      transition: "width 600ms var(--ease-out-quint)",
+                    }}
+                  />
+                </div>
+                <span
+                  style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--forest)", minWidth: 36 }}
+                >
+                  {Math.round(doc.extraction.confidence * 100)}%
+                </span>
+              </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Type de document
-                </label>
-                <select
-                  value={form.documentType}
-                  onChange={(e) => set("documentType", e.target.value)}
-                  className={inputClass()}
-                >
-                  {DOCUMENT_TYPES.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {/* Form fields */}
+            <div className="card" style={{ padding: "1.25rem" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "1rem",
+                }}
+              >
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <FieldLabel>Type de document</FieldLabel>
+                  <select
+                    value={form.documentType}
+                    onChange={(e) => set("documentType", e.target.value)}
+                    className="input-field"
+                  >
+                    {DOCUMENT_TYPES.map((t) => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="col-span-2">
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Fournisseur
-                </label>
-                <input
-                  value={form.vendorName}
-                  onChange={(e) => set("vendorName", e.target.value)}
-                  className={inputClass()}
-                />
-              </div>
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <FieldLabel>Fournisseur</FieldLabel>
+                  <input
+                    value={form.vendorName}
+                    onChange={(e) => set("vendorName", e.target.value)}
+                    className="input-field"
+                    placeholder="Nom du fournisseur"
+                  />
+                </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  N° facture
-                </label>
-                <input
-                  value={form.invoiceNumber}
-                  onChange={(e) => set("invoiceNumber", e.target.value)}
-                  className={inputClass()}
-                />
-              </div>
+                <div>
+                  <FieldLabel>N° facture</FieldLabel>
+                  <input
+                    value={form.invoiceNumber}
+                    onChange={(e) => set("invoiceNumber", e.target.value)}
+                    className="input-field"
+                    placeholder="INV-001"
+                  />
+                </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Date
-                </label>
-                <input
-                  type="date"
-                  value={form.documentDate}
-                  onChange={(e) => set("documentDate", e.target.value)}
-                  className={inputClass()}
-                />
-              </div>
+                <div>
+                  <FieldLabel>Date</FieldLabel>
+                  <input
+                    type="date"
+                    value={form.documentDate}
+                    onChange={(e) => set("documentDate", e.target.value)}
+                    className="input-field"
+                  />
+                </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Devise
-                </label>
-                <input
-                  value={form.currency}
-                  onChange={(e) => set("currency", e.target.value.toUpperCase())}
-                  maxLength={3}
-                  className={inputClass()}
-                />
-              </div>
+                <div>
+                  <FieldLabel>Devise</FieldLabel>
+                  <input
+                    value={form.currency}
+                    onChange={(e) => set("currency", e.target.value.toUpperCase())}
+                    maxLength={3}
+                    className="input-field"
+                    placeholder="EUR"
+                  />
+                </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Catégorie
-                </label>
-                <input
-                  value={form.category}
-                  onChange={(e) => set("category", e.target.value)}
-                  className={inputClass()}
-                />
-              </div>
+                <div>
+                  <FieldLabel>Catégorie</FieldLabel>
+                  <input
+                    value={form.category}
+                    onChange={(e) => set("category", e.target.value)}
+                    className="input-field"
+                    placeholder="Fournitures, Services…"
+                  />
+                </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Montant HT
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={form.amountHt}
-                  onChange={(e) => set("amountHt", e.target.value)}
-                  className={inputClass()}
-                />
-              </div>
+                <div>
+                  <FieldLabel>Montant HT</FieldLabel>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={form.amountHt}
+                    onChange={(e) => set("amountHt", e.target.value)}
+                    className="input-field"
+                    placeholder="0.00"
+                  />
+                </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Taux TVA (%)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={form.vatRate}
-                  onChange={(e) => set("vatRate", e.target.value)}
-                  className={inputClass()}
-                />
-              </div>
+                <div>
+                  <FieldLabel>Taux TVA (%)</FieldLabel>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={form.vatRate}
+                    onChange={(e) => set("vatRate", e.target.value)}
+                    className="input-field"
+                    placeholder="20"
+                  />
+                </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Montant TVA
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={form.vatAmount}
-                  onChange={(e) => set("vatAmount", e.target.value)}
-                  className={inputClass()}
-                />
-              </div>
+                <div>
+                  <FieldLabel>Montant TVA</FieldLabel>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={form.vatAmount}
+                    onChange={(e) => set("vatAmount", e.target.value)}
+                    className="input-field"
+                    placeholder="0.00"
+                  />
+                </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Montant TTC
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={form.amountTtc}
-                  onChange={(e) => set("amountTtc", e.target.value)}
-                  className={inputClass()}
-                />
-              </div>
+                <div>
+                  <FieldLabel>Montant TTC</FieldLabel>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={form.amountTtc}
+                    onChange={(e) => set("amountTtc", e.target.value)}
+                    className="input-field"
+                    placeholder="0.00"
+                  />
+                </div>
 
-              <div className="col-span-2">
-                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Code comptable
-                </label>
-                <input
-                  value={form.accountCode}
-                  onChange={(e) => set("accountCode", e.target.value)}
-                  list="account-suggestions"
-                  placeholder="ex : 622"
-                  className={inputClass()}
-                />
-                <datalist id="account-suggestions">
-                  {accountSuggestions.map((s) => (
-                    <option key={s.code} value={s.code}>
-                      {s.label}
-                    </option>
-                  ))}
-                </datalist>
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <FieldLabel>Code comptable</FieldLabel>
+                  <input
+                    value={form.accountCode}
+                    onChange={(e) => set("accountCode", e.target.value)}
+                    list="account-suggestions"
+                    placeholder="ex : 622"
+                    className="input-field"
+                  />
+                  <datalist id="account-suggestions">
+                    {accountSuggestions.map((s) => (
+                      <option key={s.code} value={s.code}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        .back-link:hover { color: var(--forest) !important; }
+      `}</style>
     </div>
+  );
+}
+
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <label
+      style={{
+        display: "block",
+        fontSize: "0.75rem",
+        fontWeight: 600,
+        color: "var(--text-mid)",
+        marginBottom: "0.375rem",
+        letterSpacing: "0.01em",
+      }}
+    >
+      {children}
+    </label>
   );
 }

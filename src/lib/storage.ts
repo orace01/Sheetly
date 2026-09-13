@@ -1,44 +1,52 @@
-import { mkdir, writeFile, readFile as fsReadFile, unlink } from "fs/promises";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 
-export const STORAGE_ROOT = path.join(process.cwd(), "storage");
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+);
+
+const BUCKET = process.env.SUPABASE_STORAGE_BUCKET || "documents";
 
 function safeSegment(segment: string): string {
-  const base = path.basename(segment).trim();
+  const base = segment.split("/").pop()?.trim() ?? "";
   if (!base || base === "." || base === "..") {
     throw new Error(`Invalid path segment: ${segment}`);
   }
   return base;
 }
 
-/** Saves a file under storage/<userId>/<documentId>/<filename> and returns the
- * path relative to STORAGE_ROOT to persist in the database. */
+/** Uploads a file to the private "documents" bucket under
+ * <userId>/<documentId>/<filename> and returns the storage key to persist in
+ * the database. The bucket is private — reads only ever happen server-side
+ * via the service role key, behind our own auth-checked API route. */
 export async function saveFile(
   userId: string,
   documentId: string,
   filename: string,
-  data: Buffer
+  data: Buffer,
+  mimeType: string
 ): Promise<string> {
-  const dir = path.join(STORAGE_ROOT, safeSegment(userId), safeSegment(documentId));
-  await mkdir(dir, { recursive: true });
-  const safeName = safeSegment(filename) || "document";
-  const filePath = path.join(dir, safeName);
-  await writeFile(filePath, data);
-  return path.relative(STORAGE_ROOT, filePath);
-}
+  const key = `${safeSegment(userId)}/${safeSegment(documentId)}/${safeSegment(filename) || "document"}`;
 
-function resolveStoredPath(relativePath: string): string {
-  const resolved = path.resolve(STORAGE_ROOT, relativePath);
-  if (!resolved.startsWith(STORAGE_ROOT + path.sep)) {
-    throw new Error("Resolved path escapes storage root");
+  const { error } = await supabase.storage.from(BUCKET).upload(key, data, {
+    contentType: mimeType,
+    upsert: true,
+  });
+  if (error) {
+    throw new Error(`Échec de l'envoi vers Supabase Storage : ${error.message}`);
   }
-  return resolved;
+  return key;
 }
 
-export async function readStoredFile(relativePath: string): Promise<Buffer> {
-  return fsReadFile(resolveStoredPath(relativePath));
+export async function readStoredFile(key: string): Promise<Buffer> {
+  const { data, error } = await supabase.storage.from(BUCKET).download(key);
+  if (error || !data) {
+    throw new Error(`Fichier introuvable dans Supabase Storage : ${error?.message ?? key}`);
+  }
+  return Buffer.from(await data.arrayBuffer());
 }
 
-export async function deleteStoredFile(relativePath: string): Promise<void> {
-  await unlink(resolveStoredPath(relativePath)).catch(() => {});
+export async function deleteStoredFile(key: string): Promise<void> {
+  await supabase.storage.from(BUCKET).remove([key]).catch(() => {});
 }
