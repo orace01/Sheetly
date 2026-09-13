@@ -1,42 +1,160 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { PLAN_DETAILS, OVERAGE_PRICE_USD_PER_DOC, type PlanKey } from "@/lib/constants";
 
-const FEATURES: { icon: string; title: string; description: string }[] = [
+function FeatureIcon({ path }: { path: ReactNode }) {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="var(--forest)"
+      strokeWidth={2.2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {path}
+    </svg>
+  );
+}
+
+const FEATURES: { icon: ReactNode; title: string; description: string }[] = [
   {
-    icon: "📂",
+    icon: (
+      <FeatureIcon
+        path={
+          <>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </>
+        }
+      />
+    ),
     title: "Glisser-déposer en masse",
     description:
       "Déposez un dossier compressé ou un lot de PDF/images. Sheetly les trie et les traite en lot.",
   },
   {
-    icon: "🔍",
+    icon: (
+      <FeatureIcon
+        path={
+          <>
+            <circle cx="10.5" cy="10.5" r="6.5" />
+            <line x1="20" y1="20" x2="15.5" y2="15.5" />
+          </>
+        }
+      />
+    ),
     title: "Vision & OCR intelligent",
     description:
       "Le moteur lit, redresse et extrait automatiquement les champs stratégiques, même sur des scans médiocres.",
   },
   {
-    icon: "↔️",
+    icon: (
+      <FeatureIcon
+        path={
+          <>
+            <rect x="3" y="4" width="8" height="16" rx="1.5" />
+            <rect x="13" y="4" width="8" height="16" rx="1.5" />
+          </>
+        }
+      />
+    ),
     title: "Interface split-screen",
     description:
       "Le document original à gauche, les données extraites à droite : validez ou corrigez en un coup d'œil.",
   },
   {
-    icon: "✅",
+    icon: (
+      <FeatureIcon
+        path={
+          <>
+            <circle cx="12" cy="12" r="9" />
+            <polyline points="8.5 12.5 11 15 16 9" />
+          </>
+        }
+      />
+    ),
     title: "Contrôle d'intégrité HT + TVA = TTC",
     description:
       "Vérification mathématique automatique qui signale immédiatement les anomalies de montants.",
   },
   {
-    icon: "🧠",
+    icon: (
+      <FeatureIcon
+        path={
+          <>
+            <circle cx="6" cy="6" r="2.5" />
+            <circle cx="18" cy="18" r="2.5" />
+            <line x1="8.2" y1="7.8" x2="15.8" y2="16.2" />
+          </>
+        }
+      />
+    ),
     title: "Cartographie des comptes apprenante",
     description:
       "Sheetly associe chaque fournisseur au bon code comptable et apprend de vos corrections.",
   },
   {
-    icon: "🛡️",
+    icon: (
+      <FeatureIcon
+        path={
+          <>
+            <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+            <polyline points="9 12 11.5 14.5 15.5 9.5" />
+          </>
+        }
+      />
+    ),
     title: "Anti-doublon",
     description:
       "Détection automatique des doublons sur la combinaison N° facture + date + montant TTC.",
+  },
+];
+
+const HOW_IT_WORKS: { title: string; description: string }[] = [
+  {
+    title: "Déposez vos documents",
+    description:
+      "Glissez un lot de factures, reçus, relevés bancaires ou un dossier .zip. Aucun tri préalable requis.",
+  },
+  {
+    title: "Vérifiez en un coup d'œil",
+    description:
+      "L'écran split-screen affiche le document et les champs extraits côte à côte, avec contrôle HT+TVA=TTC automatique.",
+  },
+  {
+    title: "Exportez votre Excel",
+    description:
+      "Un clic génère un fichier XLSX ou CSV structuré, prêt à importer dans votre logiciel comptable.",
+  },
+];
+
+const FAQ: { question: string; answer: string }[] = [
+  {
+    question: "Mes documents sont-ils stockés en sécurité ?",
+    answer:
+      "Oui. Vos fichiers sont hébergés sur une infrastructure cloud chiffrée et ne sont accessibles que depuis votre compte.",
+  },
+  {
+    question: "Quels formats de documents sont pris en charge ?",
+    answer:
+      "PDF, JPG, PNG et WEBP, ainsi que des dossiers .zip contenant plusieurs fichiers à traiter en une seule fois.",
+  },
+  {
+    question: "Dois-je changer de logiciel comptable ?",
+    answer: "Non. Sheetly exporte vers Excel/CSV, compatible avec tous les logiciels de comptabilité du marché.",
+  },
+  {
+    question: "Que se passe-t-il si je dépasse mon forfait ?",
+    answer:
+      "Vos documents continuent d'être traités sans interruption ; chaque document au-delà du forfait est facturé 0.10 $.",
+  },
+  {
+    question: "Puis-je annuler à tout moment ?",
+    answer: "Oui. Vous changez de forfait librement depuis vos paramètres, sans engagement ni préavis.",
   },
 ];
 
@@ -227,6 +345,77 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── HOW IT WORKS ──────────────────────────────────────── */}
+        <section style={{ padding: "5rem 1.5rem", background: "var(--mint-bg)" }}>
+          <div style={{ maxWidth: 1152, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+              <span
+                className="badge badge-green"
+                style={{ marginBottom: "0.75rem", display: "inline-flex" }}
+              >
+                Comment ça marche
+              </span>
+              <h2
+                style={{
+                  fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.02em",
+                  color: "var(--forest)",
+                }}
+              >
+                De la facture à l&apos;Excel, en trois étapes
+              </h2>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: "1.5rem",
+              }}
+            >
+              {HOW_IT_WORKS.map((step, i) => (
+                <div
+                  key={step.title}
+                  className={`card anim-fade-up anim-delay-${i + 1}`}
+                  style={{ padding: "1.75rem" }}
+                >
+                  <div
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: "0.75rem",
+                      background: "var(--lime-pale)",
+                      color: "var(--forest)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "1.125rem",
+                      fontWeight: 700,
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    {i + 1}
+                  </div>
+                  <h3
+                    style={{
+                      fontWeight: 600,
+                      fontSize: "1rem",
+                      color: "var(--forest)",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    {step.title}
+                  </h3>
+                  <p style={{ fontSize: "0.875rem", color: "var(--text-mid)", lineHeight: 1.6 }}>
+                    {step.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── FEATURES ──────────────────────────────────────────── */}
         <section style={{ padding: "5rem 1.5rem", background: "#fff", borderTop: "1.5px solid var(--mint-border)" }}>
           <div style={{ maxWidth: 1152, margin: "0 auto" }}>
@@ -271,7 +460,6 @@ export default function Home() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "1.375rem",
                       marginBottom: "1rem",
                     }}
                   >
@@ -457,6 +645,72 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* ── FAQ ───────────────────────────────────────────────── */}
+        <section style={{ padding: "5rem 1.5rem", background: "#fff", borderTop: "1.5px solid var(--mint-border)" }}>
+          <div style={{ maxWidth: 720, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+              <span
+                className="badge badge-green"
+                style={{ marginBottom: "0.75rem", display: "inline-flex" }}
+              >
+                FAQ
+              </span>
+              <h2
+                style={{
+                  fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.02em",
+                  color: "var(--forest)",
+                }}
+              >
+                Vos questions, nos réponses
+              </h2>
+            </div>
+
+            <div>
+              {FAQ.map((item, i) => (
+                <div
+                  key={item.question}
+                  className={`anim-fade-up anim-delay-${i + 1}`}
+                  style={{
+                    padding: "1.5rem 0",
+                    borderTop: "1.5px solid var(--mint-border)",
+                    borderBottom: i === FAQ.length - 1 ? "1.5px solid var(--mint-border)" : undefined,
+                  }}
+                >
+                  <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--forest)", marginBottom: "0.5rem" }}>
+                    {item.question}
+                  </h3>
+                  <p style={{ fontSize: "0.875rem", color: "var(--text-mid)", lineHeight: 1.6 }}>{item.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── FINAL CTA ─────────────────────────────────────────── */}
+        <section style={{ padding: "5.5rem 1.5rem", background: "var(--forest)", textAlign: "center" }}>
+          <div className="anim-fade-up">
+            <h2
+              style={{
+                fontSize: "clamp(1.5rem, 3.5vw, 2rem)",
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+                color: "#fff",
+                marginBottom: "0.75rem",
+              }}
+            >
+              Prêt à ne plus ressaisir vos factures à la main ?
+            </h2>
+            <p style={{ fontSize: "0.9375rem", color: "rgba(255,255,255,0.65)", marginBottom: "2rem" }}>
+              Créez votre compte gratuit et traitez vos 50 premiers documents dès aujourd&apos;hui.
+            </p>
+            <Link href="/register" className="btn-lime" style={{ padding: "0.75rem 1.75rem", fontSize: "1rem" }}>
+              Commencer gratuitement →
+            </Link>
+          </div>
+        </section>
       </main>
 
       {/* ── FOOTER ────────────────────────────────────────────────── */}
@@ -468,6 +722,17 @@ export default function Home() {
           textAlign: "center",
         }}
       >
+        <nav style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1.5rem", marginBottom: "1rem" }}>
+          <Link href="#pricing" className="nav-link" style={{ fontSize: "0.8125rem", color: "var(--text-mid)", fontWeight: 500, padding: "0.25rem 0.5rem", borderRadius: "0.375rem" }}>
+            Tarifs
+          </Link>
+          <Link href="/login" className="nav-link" style={{ fontSize: "0.8125rem", color: "var(--text-mid)", fontWeight: 500, padding: "0.25rem 0.5rem", borderRadius: "0.375rem" }}>
+            Se connecter
+          </Link>
+          <Link href="/register" className="nav-link" style={{ fontSize: "0.8125rem", color: "var(--text-mid)", fontWeight: 500, padding: "0.25rem 0.5rem", borderRadius: "0.375rem" }}>
+            Créer un compte
+          </Link>
+        </nav>
         <span
           style={{ fontWeight: 700, fontSize: "1rem", color: "var(--forest)", letterSpacing: "-0.02em" }}
         >
