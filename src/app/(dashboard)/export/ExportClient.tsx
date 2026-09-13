@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { AVAILABLE_EXPORT_FIELDS } from "@/lib/export/fields";
 
 type Template = {
@@ -129,23 +129,33 @@ export function ExportClient({
   }
 
   return (
-    <div className="max-w-3xl space-y-8">
-      <div>
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-white">Export</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+      {/* ── Page header ── */}
+      <div className="anim-fade-up">
+        <h1
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+            color: "var(--forest)",
+          }}
+        >
+          Export
+        </h1>
+        <p style={{ marginTop: "0.25rem", fontSize: "0.875rem", color: "var(--text-muted)" }}>
           Générez un fichier Excel ou CSV structuré à partir de vos documents extraits (
           {totalExtracted} disponibles).
         </p>
       </div>
 
-      <div>
-        <h2 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-          Quels documents ?
-        </h2>
+      {/* ── Scope ── */}
+      <div className="anim-fade-up anim-delay-1">
+        <Eyebrow>Quels documents ?</Eyebrow>
         <select
           value={scope}
           onChange={(e) => setScope(e.target.value)}
-          className="w-full max-w-sm rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+          className="input-field"
+          style={{ maxWidth: 420 }}
         >
           <option value="all">Tous les documents extraits ({totalExtracted})</option>
           {batches.map((b) => (
@@ -157,18 +167,25 @@ export function ExportClient({
         </select>
       </div>
 
-      <div>
-        <h2 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">Format</h2>
-        <div className="flex gap-2">
+      {/* ── Format ── */}
+      <div className="anim-fade-up anim-delay-1">
+        <Eyebrow>Format</Eyebrow>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           {(["xlsx", "csv"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFormat(f)}
-              className={`rounded-lg px-4 py-2 text-sm font-medium ${
-                format === f
-                  ? "bg-indigo-600 text-white"
-                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-400"
-              }`}
+              style={{
+                padding: "0.4375rem 1.375rem",
+                borderRadius: 99,
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                border: format === f ? "1.5px solid var(--forest)" : "1.5px solid var(--mint-border)",
+                background: format === f ? "var(--forest)" : "#fff",
+                color: format === f ? "#fff" : "var(--text-mid)",
+                transition: "background 150ms, color 150ms, border-color 150ms",
+              }}
             >
               {f.toUpperCase()}
             </button>
@@ -176,62 +193,71 @@ export function ExportClient({
         </div>
       </div>
 
-      <div>
-        <h2 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-          Colonnes du template
-        </h2>
-        <div className="space-y-2 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+      {/* ── Columns ── */}
+      <div className="anim-fade-up anim-delay-2">
+        <Eyebrow>Colonnes du template</Eyebrow>
+        <div
+          className="card"
+          style={{
+            padding: "1.25rem 1.5rem",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "0.75rem 2rem",
+          }}
+        >
           {columns.map((c) => (
-            <div key={c.field} className="flex items-center gap-3">
+            <div key={c.field} style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
               <input
                 type="checkbox"
                 checked={c.included}
                 onChange={() => toggleField(c.field)}
-                className="h-4 w-4"
+                className="chk"
               />
               <input
                 value={c.header}
                 onChange={(e) => updateHeader(c.field, e.target.value)}
                 disabled={!c.included}
-                className="w-64 rounded-lg border border-zinc-300 px-2 py-1 text-sm disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                className="input-field"
+                style={{ opacity: c.included ? 1 : 0.45 }}
               />
             </div>
           ))}
         </div>
       </div>
 
-      <div className="flex flex-wrap items-end gap-3">
-        <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-500">
-            Enregistrer comme modèle
-          </label>
+      {/* ── Template save/load ── */}
+      <div
+        className="anim-fade-up anim-delay-3"
+        style={{ display: "flex", alignItems: "flex-end", gap: "0.75rem", flexWrap: "wrap" }}
+      >
+        <div style={{ minWidth: 220 }}>
+          <FieldLabel>Enregistrer comme modèle</FieldLabel>
           <input
             value={templateName}
             onChange={(e) => setTemplateName(e.target.value)}
-            placeholder="ex : Export cabinet X"
-            className="w-56 rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+            placeholder="ex : Export mensuel factures"
+            className="input-field"
           />
         </div>
         <button
           onClick={handleSaveTemplate}
           disabled={saving || !templateName.trim()}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+          className="btn-ghost"
+          style={{ opacity: saving || !templateName.trim() ? 0.6 : 1 }}
         >
           Enregistrer le modèle
         </button>
 
         {savedTemplates.length > 0 && (
-          <div>
-            <label className="mb-1 block text-xs font-medium text-zinc-500">
-              Charger un modèle
-            </label>
+          <div style={{ minWidth: 200 }}>
+            <FieldLabel>Charger un modèle</FieldLabel>
             <select
               onChange={(e) => e.target.value && loadTemplate(e.target.value)}
               defaultValue=""
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+              className="input-field"
             >
               <option value="" disabled>
-                Choisir...
+                Choisir…
               </option>
               {savedTemplates.map((t) => (
                 <option key={t.id} value={t.id}>
@@ -243,16 +269,84 @@ export function ExportClient({
         )}
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {message && <p className="text-sm text-green-600">{message}</p>}
+      {error && <p style={{ fontSize: "0.875rem", color: "#991b1b" }}>{error}</p>}
+      {message && <p style={{ fontSize: "0.875rem", color: "var(--forest)" }}>{message}</p>}
 
-      <button
-        onClick={handleExport}
-        disabled={exporting || totalExtracted === 0}
-        className="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
-      >
-        {exporting ? "Génération..." : `Télécharger le fichier ${format.toUpperCase()}`}
-      </button>
+      {/* ── Main CTA ── */}
+      <div className="anim-fade-up anim-delay-4">
+        <button
+          onClick={handleExport}
+          disabled={exporting || totalExtracted === 0}
+          className="btn-primary"
+          style={{ opacity: exporting || totalExtracted === 0 ? 0.6 : 1 }}
+        >
+          {exporting ? "Génération..." : `Télécharger le fichier ${format.toUpperCase()}`}
+        </button>
+      </div>
+
+      <style>{`
+        .chk {
+          appearance: none;
+          -webkit-appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 5px;
+          border: 1.5px solid var(--mint-border);
+          background: #fff;
+          cursor: pointer;
+          position: relative;
+          flex-shrink: 0;
+        }
+        .chk:checked {
+          background: var(--lime);
+          border-color: var(--lime);
+        }
+        .chk:checked::after {
+          content: "";
+          position: absolute;
+          left: 5px;
+          top: 1px;
+          width: 5px;
+          height: 9px;
+          border: solid var(--forest);
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg);
+        }
+      `}</style>
     </div>
+  );
+}
+
+function Eyebrow({ children }: { children: ReactNode }) {
+  return (
+    <div
+      style={{
+        fontSize: "0.75rem",
+        fontWeight: 700,
+        letterSpacing: "0.06em",
+        textTransform: "uppercase",
+        color: "var(--text-muted)",
+        marginBottom: "0.875rem",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function FieldLabel({ children }: { children: ReactNode }) {
+  return (
+    <label
+      style={{
+        display: "block",
+        fontSize: "0.75rem",
+        fontWeight: 600,
+        color: "var(--text-mid)",
+        marginBottom: "0.375rem",
+        letterSpacing: "0.01em",
+      }}
+    >
+      {children}
+    </label>
   );
 }
