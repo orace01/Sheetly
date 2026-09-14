@@ -30,6 +30,18 @@ npx prisma migrate dev
 npm run dev
 ```
 
+### Tests
+
+```bash
+npm test          # exécute la suite une fois
+npm run test:watch
+```
+
+Vitest couvre la logique métier pure : contrôle d'intégrité HT+TVA=TTC,
+normalisation des noms de fournisseurs, détection de doublons, calcul de
+quotas, hachage des mots de passe, et génération CSV/XLSX. Les routes API
+elles-mêmes (upload, extraction, export) ne sont pas encore couvertes.
+
 ### Déploiement (Vercel + Supabase)
 
 L'app est conçue pour tourner sur une plateforme serverless comme Vercel :
@@ -93,4 +105,4 @@ ils sont documentés ici plutôt que laissés implicites.
 - Comptes multi-utilisateurs (plan Cabinet)
 - Redressement géométrique des photos inclinées
 - Intégrations directes vers des logiciels comptables tiers
-- Suite de tests automatisés (aucun test n'est inclus dans cette v1)
+- Étendre la suite de tests aux routes API (aujourd'hui limitée à la logique métier pure)
