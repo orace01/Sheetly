@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { PLAN_DETAILS, OVERAGE_PRICE_USD_PER_DOC, type PlanKey } from "@/lib/constants";
 
 function FeatureIcon({ path }: { path: ReactNode }) {
@@ -9,12 +9,28 @@ function FeatureIcon({ path }: { path: ReactNode }) {
       height="22"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="var(--forest)"
+      stroke="var(--lime)"
       strokeWidth={2.2}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
       {path}
+    </svg>
+  );
+}
+
+function Sparkle({ style, delay }: { style: CSSProperties; delay?: string }) {
+  return (
+    <svg
+      aria-hidden
+      className="anim-sparkle"
+      style={{ position: "absolute", animationDelay: delay, ...style }}
+      width={style.width ?? 14}
+      height={style.height ?? 14}
+      viewBox="0 0 24 24"
+      fill="var(--lime)"
+    >
+      <path d="M12 0 L14.5 9.5 L24 12 L14.5 14.5 L12 24 L9.5 14.5 L0 12 L9.5 9.5 Z" />
     </svg>
   );
 }
@@ -114,24 +130,6 @@ const FEATURES: { icon: ReactNode; title: string; description: string }[] = [
   },
 ];
 
-const HOW_IT_WORKS: { title: string; description: string }[] = [
-  {
-    title: "Déposez vos documents",
-    description:
-      "Glissez un lot de factures, reçus, relevés bancaires ou un dossier .zip. Aucun tri préalable requis.",
-  },
-  {
-    title: "Vérifiez en un coup d'œil",
-    description:
-      "L'écran split-screen affiche le document et les champs extraits côte à côte, avec contrôle HT+TVA=TTC automatique.",
-  },
-  {
-    title: "Exportez votre Excel",
-    description:
-      "Un clic génère un fichier XLSX ou CSV structuré, prêt à importer dans votre logiciel comptable.",
-  },
-];
-
 const FAQ: { question: string; answer: string }[] = [
   {
     question: "Mes documents sont-ils stockés en sécurité ?",
@@ -160,381 +158,507 @@ const FAQ: { question: string; answer: string }[] = [
 
 const PLAN_ORDER: PlanKey[] = ["FREE", "STARTER", "CABINET"];
 
+const STATS: { value: string; label: string }[] = [
+  { value: String(PLAN_DETAILS.FREE.docsIncluded), label: "Documents gratuits" },
+  { value: "4", label: "Formats acceptés" },
+  { value: "30s", label: "Par document" },
+  { value: String(PLAN_ORDER.length), label: "Formules tarifaires" },
+];
+
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col" style={{ background: "var(--mint-bg)" }}>
-      {/* ── HEADER ─────────────────────────────────────────────── */}
-      <header
+    <div className="flex flex-1 flex-col" style={{ background: "var(--ink)" }}>
+      {/* ── HEADER + HERO (shared dark canvas) ── */}
+      <section
         style={{
-          background: "#fff",
-          borderBottom: "1.5px solid var(--mint-border)",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          backdropFilter: "blur(8px)",
+          position: "relative",
+          background: "radial-gradient(120% 90% at 78% 10%, #0d2a1e 0%, var(--ink) 55%)",
+          overflow: "hidden",
+          paddingBottom: "6rem",
         }}
       >
+        {/* decorative glows */}
+        <div
+          aria-hidden
+          className="anim-glow"
+          style={{
+            position: "absolute",
+            top: -220,
+            right: -160,
+            width: 640,
+            height: 640,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(61,220,132,0.30) 0%, transparent 70%)",
+            filter: "blur(10px)",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            top: 120,
+            left: -140,
+            width: 360,
+            height: 360,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(61,220,132,0.10) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* decorative sparkles */}
+        <Sparkle style={{ top: 96, left: "46%", width: 18, height: 18 }} delay="0.3s" />
+        <Sparkle style={{ top: 260, left: "8%", width: 12, height: 12 }} delay="1.1s" />
+        <Sparkle style={{ top: 430, left: "58%", width: 14, height: 14 }} delay="1.8s" />
+
+        {/* decorative dotted flow line */}
+        <svg
+          aria-hidden
+          style={{ position: "absolute", top: 40, left: 0, width: "100%", height: 520, pointerEvents: "none" }}
+          viewBox="0 0 1280 520"
+          fill="none"
+        >
+          <path
+            d="M 60 40 C 260 10, 420 120, 560 90 C 700 60, 760 180, 700 260 C 640 340, 800 360, 880 300"
+            stroke="rgba(61,220,132,0.35)"
+            strokeWidth="2"
+            strokeDasharray="1 10"
+            strokeLinecap="round"
+          />
+        </svg>
+
+        {/* header */}
+        <header style={{ position: "relative", zIndex: 2 }}>
+          <div
+            style={{
+              maxWidth: 1200,
+              margin: "0 auto",
+              padding: "1.75rem 1.5rem 0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <span style={{ fontSize: "1.25rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
+              Sheetly
+            </span>
+            <nav className="header-nav" style={{ display: "flex", alignItems: "center", gap: "1.75rem" }}>
+              <a href="#features" className="nav-link-dark">
+                Fonctionnalités
+              </a>
+              <a href="#pricing" className="nav-link-dark">
+                Tarifs
+              </a>
+              <a href="#faq" className="nav-link-dark">
+                FAQ
+              </a>
+            </nav>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <Link href="/login" className="nav-link-dark header-login-link">
+                Se connecter
+              </Link>
+              <Link href="/register" className="btn-outline">
+                Commencer →
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        {/* hero body */}
         <div
           style={{
-            maxWidth: 1152,
+            position: "relative",
+            zIndex: 2,
+            maxWidth: 1200,
             margin: "0 auto",
-            padding: "0 1.5rem",
+            padding: "5.5rem 1.5rem 0",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            height: 64,
+            gap: "2.5rem",
+            flexWrap: "wrap",
           }}
         >
-          <span
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 700,
-              color: "var(--forest)",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Sheetly
-          </span>
-          <nav style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <Link
-              href="/login"
-              style={{
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                color: "var(--text-mid)",
-                textDecoration: "none",
-                padding: "0.375rem 0.75rem",
-                borderRadius: "0.5rem",
-                transition: "color 150ms, background 150ms",
-              }}
-              className="nav-link"
-            >
-              Se connecter
-            </Link>
-            <Link href="/register" className="btn-lime">
-              Commencer gratuitement
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      <main style={{ flex: 1 }}>
-        {/* ── HERO ──────────────────────────────────────────────── */}
-        <section
-          style={{
-            background: "var(--forest)",
-            padding: "6rem 1.5rem 7rem",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          {/* Decorative radial glow */}
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              top: "-30%",
-              right: "-10%",
-              width: 600,
-              height: 600,
-              background: "radial-gradient(circle, rgba(61,220,132,0.15) 0%, transparent 70%)",
-              pointerEvents: "none",
-            }}
-          />
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              bottom: "-20%",
-              left: "-5%",
-              width: 400,
-              height: 400,
-              background: "radial-gradient(circle, rgba(61,220,132,0.08) 0%, transparent 70%)",
-              pointerEvents: "none",
-            }}
-          />
-
-          <div
-            style={{ maxWidth: 768, margin: "0 auto", textAlign: "center", position: "relative" }}
-          >
-            {/* Label chip */}
-            <div
-              className="anim-fade-up"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.375rem",
-                background: "rgba(61,220,132,0.15)",
-                border: "1px solid rgba(61,220,132,0.35)",
-                borderRadius: 99,
-                padding: "0.25rem 0.875rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              <span
-                style={{
-                  width: 7,
-                  height: 7,
-                  borderRadius: "50%",
-                  background: "var(--lime)",
-                  display: "inline-block",
-                }}
-              />
-              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--lime)" }}>
-                Extraction comptable automatisée par IA
-              </span>
-            </div>
-
+          {/* left: copy */}
+          <div style={{ flex: "1 1 460px", minWidth: 320 }}>
             <h1
-              className="anim-fade-up anim-delay-1"
+              className="anim-fade-up-dark"
               style={{
-                fontSize: "clamp(2.5rem, 6vw, 4rem)",
+                fontSize: "clamp(2.25rem, 4.5vw, 3.25rem)",
                 fontWeight: 700,
-                lineHeight: 1.1,
+                lineHeight: 1.12,
                 letterSpacing: "-0.03em",
-                color: "#fff",
-                marginBottom: "1.5rem",
+                color: "var(--text-hi)",
+                marginBottom: "1.375rem",
               }}
             >
               Glissez vos PDF.
               <br />
-              <span style={{ color: "var(--lime)" }}>Téléchargez votre Excel</span>
+              <span style={{ position: "relative", display: "inline-block" }}>
+                Téléchargez votre Excel
+                <svg
+                  aria-hidden
+                  style={{ position: "absolute", left: -4, right: -4, bottom: -10, width: "calc(100% + 8px)", height: 18 }}
+                  viewBox="0 0 320 18"
+                  preserveAspectRatio="none"
+                  fill="none"
+                >
+                  <path
+                    d="M2 12 C 60 2, 160 2, 200 9 C 240 15, 290 10, 318 6"
+                    stroke="var(--lime)"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
               <br />
               propre en 30 secondes.
             </h1>
-
             <p
-              className="anim-fade-up anim-delay-2"
-              style={{
-                fontSize: "1.125rem",
-                lineHeight: 1.6,
-                color: "rgba(255,255,255,0.7)",
-                maxWidth: 560,
-                margin: "0 auto 2.5rem",
-              }}
+              className="anim-fade-up-dark anim-delay-dark-1"
+              style={{ fontSize: "1.0625rem", lineHeight: 1.6, color: "var(--text-hi-mid)", maxWidth: 480, marginBottom: "2rem" }}
             >
-              Sheetly transforme vos factures, reçus, relevés bancaires et bons de commande en
-              données comptables prêtes à l&apos;emploi — sans changer de logiciel comptable et
-              sans ressaisie manuelle.
+              Sheetly transforme vos factures, reçus, relevés bancaires et bons de commande en données comptables
+              prêtes à l&apos;emploi — sans changer de logiciel comptable et sans ressaisie manuelle.
             </p>
-
             <div
-              className="anim-fade-up anim-delay-3"
-              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}
+              className="anim-fade-up-dark anim-delay-dark-2"
+              style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}
             >
-              <Link href="/register" className="btn-lime" style={{ padding: "0.75rem 1.75rem", fontSize: "1rem" }}>
+              <Link href="/register" className="btn-lime">
                 Essayer gratuitement →
               </Link>
-              <Link href="/login" className="btn-ghost" style={{ padding: "0.75rem 1.75rem", fontSize: "1rem", color: "rgba(255,255,255,0.8)", borderColor: "rgba(255,255,255,0.25)" }}>
+              <Link href="/login" className="btn-outline">
                 Se connecter
               </Link>
             </div>
-
-            {/* Mini social proof */}
             <p
-              className="anim-fade-up anim-delay-4"
-              style={{
-                marginTop: "2rem",
-                fontSize: "0.8rem",
-                color: "rgba(255,255,255,0.4)",
-                letterSpacing: "0.02em",
-              }}
+              className="anim-fade-up-dark anim-delay-dark-3"
+              style={{ marginTop: "1.5rem", fontSize: "0.8125rem", color: "var(--text-hi-muted)", letterSpacing: "0.02em" }}
             >
               Gratuit jusqu&apos;à {PLAN_DETAILS.FREE.docsIncluded} documents · Aucune carte de crédit requise
             </p>
           </div>
-        </section>
 
-        {/* ── HOW IT WORKS ──────────────────────────────────────── */}
-        <section style={{ padding: "5rem 1.5rem", background: "var(--mint-bg)" }}>
-          <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-            <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <span
-                className="badge badge-green"
-                style={{ marginBottom: "0.75rem", display: "inline-flex" }}
-              >
-                Comment ça marche
-              </span>
-              <h2
-                style={{
-                  fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-                  fontWeight: 700,
-                  letterSpacing: "-0.02em",
-                  color: "var(--forest)",
-                }}
-              >
-                De la facture à l&apos;Excel, en trois étapes
+          {/* right: document card stack */}
+          <div
+            className="anim-fade-up-dark anim-delay-dark-4"
+            style={{ flex: "1 1 380px", minWidth: 300, position: "relative", height: 380 }}
+          >
+            {/* back card: raw document */}
+            <div
+              className="anim-float-card"
+              style={{
+                ["--rot" as string]: "-9deg",
+                position: "absolute",
+                top: 10,
+                left: 30,
+                width: 260,
+                height: 170,
+                borderRadius: 20,
+                background: "linear-gradient(135deg, #16201a 0%, #0c1712 100%)",
+                border: "1px solid var(--line)",
+                boxShadow: "0 30px 60px rgba(0,0,0,0.5)",
+                padding: "1.375rem",
+                animationDelay: "0.2s",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ width: 30, height: 22, borderRadius: 5, background: "rgba(255,255,255,0.12)" }} />
+                <span style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.05em", color: "var(--text-hi-muted)" }}>
+                  FACTURE_2847.PDF
+                </span>
+              </div>
+              <div style={{ marginTop: "1.625rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                <div style={{ width: "70%", height: 6, borderRadius: 3, background: "rgba(255,255,255,0.10)" }} />
+                <div style={{ width: "45%", height: 6, borderRadius: 3, background: "rgba(255,255,255,0.10)" }} />
+              </div>
+            </div>
+
+            {/* front card: extracted result */}
+            <div
+              className="anim-float-card"
+              style={{
+                ["--rot" as string]: "5deg",
+                position: "absolute",
+                top: 90,
+                left: 110,
+                width: 270,
+                height: 190,
+                borderRadius: 20,
+                background: "linear-gradient(135deg, #143b2b 0%, #0b241a 100%)",
+                border: "1px solid rgba(61,220,132,0.30)",
+                boxShadow: "0 30px 70px rgba(0,0,0,0.55), 0 0 60px rgba(61,220,132,0.12)",
+                padding: "1.375rem",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                animationDelay: "0.7s",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                    fontSize: "0.6875rem",
+                    fontWeight: 700,
+                    color: "var(--lime)",
+                    background: "rgba(61,220,132,0.14)",
+                    padding: "3px 9px",
+                    borderRadius: 99,
+                  }}
+                >
+                  ✓ Vérifié
+                </span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2">
+                  <path d="M2 8.5c4-4 8-4 10 0M6 11c2.5-2.5 5-2.5 7.5 0M9.5 13.5c1-1 2-1 3 0" />
+                  <circle cx="12" cy="16.5" r="1" />
+                </svg>
+              </div>
+              <div>
+                <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.05em", color: "var(--text-hi-muted)", marginBottom: 4 }}>
+                  FOURNISSEUR
+                </div>
+                <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-hi)" }}>EDF Entreprises</div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                <div>
+                  <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.05em", color: "var(--text-hi-muted)", marginBottom: 4 }}>
+                    MONTANT TTC
+                  </div>
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-hi)" }}>1 284,50 €</div>
+                </div>
+                <span
+                  style={{
+                    fontFamily: "var(--font-geist-mono), ui-monospace, monospace",
+                    fontSize: "0.6875rem",
+                    fontWeight: 700,
+                    color: "var(--forest)",
+                    background: "var(--lime)",
+                    padding: "3px 9px",
+                    borderRadius: 6,
+                  }}
+                >
+                  606
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* stats bar, overlapping the bottom edge */}
+        <div
+          className="anim-fade-up-dark anim-delay-dark-5"
+          style={{ position: "relative", zIndex: 3, maxWidth: 940, margin: "4.5rem auto 0", padding: "0 1.5rem" }}
+        >
+          <div
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid var(--line)",
+              borderRadius: 20,
+              padding: "1.75rem 1.25rem",
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              textAlign: "center",
+            }}
+          >
+            {STATS.map((stat, i) => (
+              <div key={stat.label} style={{ borderRight: i < STATS.length - 1 ? "1px solid var(--line)" : undefined }}>
+                <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text-hi)" }}>{stat.value}</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-hi-muted)", marginTop: 4 }}>{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <main style={{ flex: 1 }}>
+        {/* ── FEATURES ──────────────────────────────────────────── */}
+        <section id="features" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem 5.5rem" }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+            <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+              <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
+                Fonctionnalités
+              </div>
+              <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
+                Le goulot d&apos;étranglement des pièces comptables, résolu
               </h2>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-                gap: "1.5rem",
-              }}
-            >
-              {HOW_IT_WORKS.map((step, i) => (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.25rem" }}>
+              {FEATURES.map((feature, i) => (
                 <div
-                  key={step.title}
-                  className={`card anim-fade-up anim-delay-${i + 1}`}
+                  key={feature.title}
+                  className={`card-dark anim-fade-up-dark anim-delay-dark-${Math.min(i + 1, 5)}`}
                   style={{ padding: "1.75rem" }}
                 >
                   <div
                     style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: "0.75rem",
-                      background: "var(--lime-pale)",
-                      color: "var(--forest)",
+                      width: 46,
+                      height: 46,
+                      borderRadius: 12,
+                      background: "rgba(61,220,132,0.10)",
+                      border: "1px solid rgba(61,220,132,0.22)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "1.125rem",
-                      fontWeight: 700,
-                      marginBottom: "1rem",
+                      marginBottom: "1.125rem",
                     }}
                   >
-                    {i + 1}
+                    {feature.icon}
                   </div>
-                  <h3
-                    style={{
-                      fontWeight: 600,
-                      fontSize: "1rem",
-                      color: "var(--forest)",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    {step.title}
+                  <h3 style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text-hi)", marginBottom: "0.5rem" }}>
+                    {feature.title}
                   </h3>
-                  <p style={{ fontSize: "0.875rem", color: "var(--text-mid)", lineHeight: 1.6 }}>
-                    {step.description}
-                  </p>
+                  <p style={{ fontSize: "0.875rem", color: "var(--text-hi-mid)", lineHeight: 1.6 }}>{feature.description}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── FEATURES ──────────────────────────────────────────── */}
-        <section style={{ padding: "5rem 1.5rem", background: "#fff", borderTop: "1.5px solid var(--mint-border)" }}>
-          <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-            <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <span
-                className="badge badge-green"
-                style={{ marginBottom: "0.75rem", display: "inline-flex" }}
-              >
-                Fonctionnalités
-              </span>
-              <h2
-                style={{
-                  fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-                  fontWeight: 700,
-                  letterSpacing: "-0.02em",
-                  color: "var(--forest)",
-                }}
-              >
-                Le goulot d&apos;étranglement des pièces comptables, résolu
+        {/* ── PERSONNALISEZ VOTRE EXPORT ─────────────────────────── */}
+        <section style={{ background: "var(--ink)", padding: "6.25rem 1.5rem", position: "relative", overflow: "hidden" }}>
+          <Sparkle style={{ top: 60, right: "18%", left: "auto", width: 14, height: 14 }} />
+          <Sparkle style={{ bottom: 80, right: "6%", left: "auto", width: 10, height: 10 }} delay="1.4s" />
+
+          <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: "3rem", flexWrap: "wrap" }}>
+            <div className="anim-fade-up-dark" style={{ flex: "1 1 420px", minWidth: 300 }}>
+              <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
+                Export sur mesure
+              </div>
+              <h2 style={{ fontSize: "2rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)", marginBottom: "1rem", lineHeight: 1.2 }}>
+                Personnalisez votre export.
               </h2>
+              <p style={{ fontSize: "0.9375rem", color: "var(--text-hi-mid)", lineHeight: 1.65, maxWidth: 440, marginBottom: "1.75rem" }}>
+                Choisissez les colonnes, l&apos;ordre et les en-têtes qui correspondent à votre logiciel comptable.
+                Enregistrez le résultat comme modèle réutilisable pour vos prochains exports XLSX ou CSV.
+              </p>
+              <Link href="/export" className="btn-lime">
+                Créer un modèle →
+              </Link>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                gap: "1.5rem",
-              }}
-            >
-              {FEATURES.map((feature, i) => (
-                <div
-                  key={feature.title}
-                  className={`card anim-fade-up anim-delay-${Math.min(i + 1, 5)}`}
-                  style={{ padding: "1.75rem" }}
-                >
-                  <div
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: "0.75rem",
-                      background: "var(--lime-pale)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    {feature.icon}
-                  </div>
-                  <h3
-                    style={{
-                      fontWeight: 600,
-                      fontSize: "1rem",
-                      color: "var(--forest)",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    {feature.title}
-                  </h3>
-                  <p style={{ fontSize: "0.875rem", color: "var(--text-mid)", lineHeight: 1.6 }}>
-                    {feature.description}
-                  </p>
+            <div className="anim-fade-up-dark anim-delay-dark-2" style={{ flex: "1 1 380px", minWidth: 300, position: "relative", height: 300 }}>
+              <div
+                className="anim-float-card"
+                style={{
+                  ["--rot" as string]: "-10deg",
+                  position: "absolute",
+                  top: 60,
+                  left: 0,
+                  width: 230,
+                  height: 150,
+                  borderRadius: 18,
+                  background: "#10241a",
+                  border: "1px solid var(--line)",
+                  boxShadow: "0 24px 48px rgba(0,0,0,0.45)",
+                  padding: "1.25rem",
+                  animationDelay: "0.1s",
+                }}
+              >
+                <div style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--text-hi-muted)", letterSpacing: "0.04em" }}>
+                  MODÈLE PERSONNALISÉ
                 </div>
-              ))}
+                <div style={{ marginTop: "1.125rem", display: "flex", flexDirection: "column", gap: "0.4375rem" }}>
+                  <div style={{ width: "60%", height: 5, borderRadius: 3, background: "rgba(255,255,255,0.12)" }} />
+                  <div style={{ width: "80%", height: 5, borderRadius: 3, background: "rgba(255,255,255,0.12)" }} />
+                </div>
+              </div>
+              <div
+                className="anim-float-card"
+                style={{
+                  ["--rot" as string]: "-2deg",
+                  position: "absolute",
+                  top: 30,
+                  left: 90,
+                  width: 230,
+                  height: 150,
+                  borderRadius: 18,
+                  background: "#0b1a13",
+                  border: "1px solid var(--line)",
+                  boxShadow: "0 26px 52px rgba(0,0,0,0.5)",
+                  padding: "1.25rem",
+                  animationDelay: "0.4s",
+                }}
+              >
+                <div style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--text-hi-muted)", letterSpacing: "0.04em" }}>EXPORT.CSV</div>
+                <div style={{ marginTop: "1.125rem", display: "flex", flexDirection: "column", gap: "0.4375rem" }}>
+                  <div style={{ width: "70%", height: 5, borderRadius: 3, background: "rgba(255,255,255,0.12)" }} />
+                  <div style={{ width: "50%", height: 5, borderRadius: 3, background: "rgba(255,255,255,0.12)" }} />
+                </div>
+              </div>
+              <div
+                className="anim-float-card"
+                style={{
+                  ["--rot" as string]: "6deg",
+                  position: "absolute",
+                  top: 10,
+                  left: 180,
+                  width: 230,
+                  height: 150,
+                  borderRadius: 18,
+                  background: "linear-gradient(135deg, #143b2b 0%, #0b241a 100%)",
+                  border: "1px solid rgba(61,220,132,0.30)",
+                  boxShadow: "0 28px 56px rgba(0,0,0,0.55), 0 0 50px rgba(61,220,132,0.10)",
+                  padding: "1.25rem",
+                  animationDelay: "0.7s",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--lime)", letterSpacing: "0.04em" }}>EXPORT.XLSX</span>
+                  <span style={{ fontSize: "0.625rem", color: "var(--forest)", background: "var(--lime)", padding: "2px 7px", borderRadius: 99, fontWeight: 700 }}>
+                    ✓
+                  </span>
+                </div>
+                <div style={{ marginTop: "1.125rem", display: "flex", flexDirection: "column", gap: "0.4375rem" }}>
+                  <div style={{ width: "75%", height: 5, borderRadius: 3, background: "rgba(255,255,255,0.20)" }} />
+                  <div style={{ width: "55%", height: 5, borderRadius: 3, background: "rgba(255,255,255,0.20)" }} />
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* ── PRICING ───────────────────────────────────────────── */}
-        <section id="pricing" style={{ padding: "5rem 1.5rem", background: "var(--mint-bg)" }}>
+        <section id="pricing" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem" }}>
           <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-            <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <span
-                className="badge badge-green"
-                style={{ marginBottom: "0.75rem", display: "inline-flex" }}
-              >
+            <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+              <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Tarifs
-              </span>
-              <h2
-                style={{
-                  fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-                  fontWeight: 700,
-                  letterSpacing: "-0.02em",
-                  color: "var(--forest)",
-                  marginBottom: "0.75rem",
-                }}
-              >
+              </div>
+              <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)", marginBottom: "0.875rem" }}>
                 Tarifs simples, sans surprise
               </h2>
-              <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
+              <p style={{ fontSize: "0.875rem", color: "var(--text-hi-muted)" }}>
                 Au-delà du forfait, chaque document supplémentaire est facturé{" "}
-                <strong>{OVERAGE_PRICE_USD_PER_DOC.toFixed(2)} $</strong>.
+                <strong style={{ color: "var(--text-hi-mid)" }}>{OVERAGE_PRICE_USD_PER_DOC.toFixed(2)} $</strong>.
               </p>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-                gap: "1.5rem",
-              }}
-            >
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.25rem" }}>
               {PLAN_ORDER.map((key, i) => {
                 const plan = PLAN_DETAILS[key];
                 const isHighlight = key === "STARTER";
                 return (
                   <div
                     key={key}
-                    className={`anim-fade-up anim-delay-${i + 1}`}
-                    style={{
-                      borderRadius: "1.25rem",
-                      padding: "2rem",
-                      border: isHighlight
-                        ? "2px solid var(--forest)"
-                        : "1.5px solid var(--mint-border)",
-                      background: isHighlight ? "var(--forest)" : "#fff",
-                      position: "relative",
-                      transition: "transform 200ms, box-shadow 200ms",
-                    }}
+                    className={`${isHighlight ? "" : "card-dark "}anim-fade-up-dark anim-delay-dark-${i + 1}`}
+                    style={
+                      isHighlight
+                        ? {
+                            borderRadius: "1.125rem",
+                            padding: "2rem",
+                            background: "linear-gradient(160deg, #123a2b 0%, #0b241a 100%)",
+                            border: "1.5px solid rgba(61,220,132,0.35)",
+                            boxShadow: "0 0 60px rgba(61,220,132,0.08)",
+                            position: "relative",
+                          }
+                        : { padding: "2rem", position: "relative" }
+                    }
                   >
                     {isHighlight && (
                       <span
@@ -547,8 +671,8 @@ export default function Home() {
                           background: "var(--lime)",
                           color: "var(--forest)",
                           fontWeight: 700,
-                          padding: "0.2rem 0.875rem",
-                          fontSize: "0.7rem",
+                          padding: "0.25rem 0.875rem",
+                          fontSize: "0.625rem",
                           letterSpacing: "0.05em",
                           textTransform: "uppercase",
                         }}
@@ -560,82 +684,37 @@ export default function Home() {
                     <h3
                       style={{
                         fontWeight: 600,
-                        color: isHighlight ? "rgba(255,255,255,0.7)" : "var(--text-muted)",
+                        color: "var(--text-hi-muted)",
                         marginBottom: "1rem",
                         textTransform: "uppercase",
                         letterSpacing: "0.06em",
-                        fontSize: "0.8rem",
+                        fontSize: "0.75rem",
                       }}
                     >
                       {plan.label}
                     </h3>
 
-                    <p
-                      style={{
-                        fontSize: "2.5rem",
-                        fontWeight: 700,
-                        letterSpacing: "-0.03em",
-                        color: isHighlight ? "#fff" : "var(--forest)",
-                        lineHeight: 1,
-                        marginBottom: "0.5rem",
-                      }}
-                    >
+                    <p style={{ fontSize: "2.375rem", fontWeight: 700, letterSpacing: "-0.03em", color: "var(--text-hi)", lineHeight: 1, marginBottom: "0.625rem" }}>
                       {plan.monthlyPriceUsd === 0 ? "Gratuit" : `${plan.monthlyPriceUsd} $`}
                       {plan.monthlyPriceUsd > 0 && (
-                        <span
-                          style={{
-                            fontSize: "0.875rem",
-                            fontWeight: 400,
-                            color: isHighlight ? "rgba(255,255,255,0.5)" : "var(--text-muted)",
-                          }}
-                        >
-                          {" "}
-                          / mois
-                        </span>
+                        <span style={{ fontSize: "0.875rem", fontWeight: 400, color: "var(--text-hi-muted)" }}> / mois</span>
                       )}
                     </p>
 
-                    <p
-                      style={{
-                        fontSize: "0.875rem",
-                        color: isHighlight ? "rgba(255,255,255,0.6)" : "var(--text-muted)",
-                        marginBottom: "0.25rem",
-                      }}
-                    >
+                    <p style={{ fontSize: "0.875rem", color: isHighlight ? "var(--text-hi-mid)" : "var(--text-hi-muted)", marginBottom: "0.25rem" }}>
                       {plan.docsIncluded} documents inclus / mois
                     </p>
-                    <p
-                      style={{
-                        fontSize: "0.875rem",
-                        color: isHighlight ? "rgba(255,255,255,0.55)" : "var(--text-muted)",
-                        marginBottom: "0.25rem",
-                      }}
-                    >
+                    <p style={{ fontSize: "0.875rem", color: isHighlight ? "var(--text-hi-mid)" : "var(--text-hi-muted)", marginBottom: "0.25rem" }}>
                       {plan.description}
                     </p>
                     {plan.multiUser && (
-                      <p
-                        style={{
-                          fontSize: "0.875rem",
-                          color: isHighlight ? "var(--lime)" : "var(--forest)",
-                          fontWeight: 500,
-                          marginBottom: "0.25rem",
-                        }}
-                      >
-                        ✓ Multi-utilisateurs
-                      </p>
+                      <p style={{ fontSize: "0.875rem", color: "var(--lime)", fontWeight: 500, marginBottom: "0.25rem" }}>✓ Multi-utilisateurs</p>
                     )}
 
                     <Link
                       href="/register"
-                      className={isHighlight ? "btn-lime" : "btn-ghost"}
-                      style={{
-                        display: "block",
-                        textAlign: "center",
-                        marginTop: "1.75rem",
-                        width: "100%",
-                        textDecoration: "none",
-                      }}
+                      className={isHighlight ? "btn-lime" : "btn-outline"}
+                      style={{ display: "block", textAlign: "center", marginTop: "1.75rem", width: "100%" }}
                     >
                       Choisir ce plan
                     </Link>
@@ -647,23 +726,13 @@ export default function Home() {
         </section>
 
         {/* ── FAQ ───────────────────────────────────────────────── */}
-        <section style={{ padding: "5rem 1.5rem", background: "#fff", borderTop: "1.5px solid var(--mint-border)" }}>
-          <div style={{ maxWidth: 720, margin: "0 auto" }}>
-            <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-              <span
-                className="badge badge-green"
-                style={{ marginBottom: "0.75rem", display: "inline-flex" }}
-              >
+        <section id="faq" style={{ background: "var(--ink)", padding: "6.25rem 1.5rem" }}>
+          <div style={{ maxWidth: 700, margin: "0 auto" }}>
+            <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3rem" }}>
+              <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 FAQ
-              </span>
-              <h2
-                style={{
-                  fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-                  fontWeight: 700,
-                  letterSpacing: "-0.02em",
-                  color: "var(--forest)",
-                }}
-              >
+              </div>
+              <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
                 Vos questions, nos réponses
               </h2>
             </div>
@@ -672,17 +741,17 @@ export default function Home() {
               {FAQ.map((item, i) => (
                 <div
                   key={item.question}
-                  className={`anim-fade-up anim-delay-${i + 1}`}
+                  className={`anim-fade-up-dark anim-delay-dark-${i + 1}`}
                   style={{
-                    padding: "1.5rem 0",
-                    borderTop: "1.5px solid var(--mint-border)",
-                    borderBottom: i === FAQ.length - 1 ? "1.5px solid var(--mint-border)" : undefined,
+                    padding: "1.375rem 0",
+                    borderTop: "1px solid var(--line)",
+                    borderBottom: i === FAQ.length - 1 ? "1px solid var(--line)" : undefined,
                   }}
                 >
-                  <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--forest)", marginBottom: "0.5rem" }}>
+                  <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-hi)", marginBottom: "0.5rem" }}>
                     {item.question}
                   </h3>
-                  <p style={{ fontSize: "0.875rem", color: "var(--text-mid)", lineHeight: 1.6 }}>{item.answer}</p>
+                  <p style={{ fontSize: "0.875rem", color: "var(--text-hi-mid)", lineHeight: 1.6 }}>{item.answer}</p>
                 </div>
               ))}
             </div>
@@ -690,24 +759,39 @@ export default function Home() {
         </section>
 
         {/* ── FINAL CTA ─────────────────────────────────────────── */}
-        <section style={{ padding: "5.5rem 1.5rem", background: "var(--forest)", textAlign: "center" }}>
-          <div className="anim-fade-up">
-            <h2
-              style={{
-                fontSize: "clamp(1.5rem, 3.5vw, 2rem)",
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
-                color: "#fff",
-                marginBottom: "0.75rem",
-              }}
-            >
+        <section
+          style={{
+            background: "linear-gradient(160deg, #0d2a1e 0%, var(--ink) 70%)",
+            padding: "6.875rem 1.5rem",
+            textAlign: "center",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            aria-hidden
+            className="anim-glow"
+            style={{
+              position: "absolute",
+              bottom: -200,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 700,
+              height: 500,
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(61,220,132,0.18) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }}
+          />
+          <div className="anim-fade-up-dark" style={{ position: "relative" }}>
+            <h2 style={{ fontSize: "clamp(1.5rem, 3.5vw, 1.875rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)", marginBottom: "0.75rem" }}>
               Prêt à ne plus ressaisir vos factures à la main ?
             </h2>
-            <p style={{ fontSize: "0.9375rem", color: "rgba(255,255,255,0.65)", marginBottom: "2rem" }}>
+            <p style={{ fontSize: "0.9375rem", color: "var(--text-hi-mid)", marginBottom: "2rem" }}>
               Créez votre compte gratuit et traitez vos {PLAN_DETAILS.FREE.docsIncluded} premiers documents dès
               aujourd&apos;hui.
             </p>
-            <Link href="/register" className="btn-lime" style={{ padding: "0.75rem 1.75rem", fontSize: "1rem" }}>
+            <Link href="/register" className="btn-lime">
               Commencer gratuitement →
             </Link>
           </div>
@@ -715,37 +799,70 @@ export default function Home() {
       </main>
 
       {/* ── FOOTER ────────────────────────────────────────────────── */}
-      <footer
-        style={{
-          borderTop: "1.5px solid var(--mint-border)",
-          background: "#fff",
-          padding: "2rem 1.5rem",
-          textAlign: "center",
-        }}
-      >
-        <nav style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1.5rem", marginBottom: "1rem" }}>
-          <Link href="#pricing" className="nav-link" style={{ fontSize: "0.8125rem", color: "var(--text-mid)", fontWeight: 500, padding: "0.25rem 0.5rem", borderRadius: "0.375rem" }}>
+      <footer style={{ background: "var(--ink)", borderTop: "1px solid var(--line)", padding: "2.5rem 1.5rem", textAlign: "center" }}>
+        <nav style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1.75rem", marginBottom: "1.125rem" }}>
+          <Link href="#pricing" className="nav-link-dark">
             Tarifs
           </Link>
-          <Link href="/login" className="nav-link" style={{ fontSize: "0.8125rem", color: "var(--text-mid)", fontWeight: 500, padding: "0.25rem 0.5rem", borderRadius: "0.375rem" }}>
+          <Link href="/login" className="nav-link-dark">
             Se connecter
           </Link>
-          <Link href="/register" className="nav-link" style={{ fontSize: "0.8125rem", color: "var(--text-mid)", fontWeight: 500, padding: "0.25rem 0.5rem", borderRadius: "0.375rem" }}>
+          <Link href="/register" className="nav-link-dark">
             Créer un compte
           </Link>
         </nav>
-        <span
-          style={{ fontWeight: 700, fontSize: "1rem", color: "var(--forest)", letterSpacing: "-0.02em" }}
-        >
-          Sheetly
-        </span>
-        <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
+        <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--text-hi)", letterSpacing: "-0.02em" }}>Sheetly</span>
+        <p style={{ fontSize: "0.8rem", color: "var(--text-hi-muted)", marginTop: "0.5rem" }}>
           © {new Date().getFullYear()} Sheetly. Tous droits réservés.
         </p>
       </footer>
 
       <style>{`
-        .nav-link:hover { color: var(--forest) !important; background: var(--mint-soft); }
+        .nav-link-dark {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--text-hi-mid);
+          padding: 0.375rem 0.25rem;
+          transition: color 150ms;
+        }
+        .nav-link-dark:hover { color: var(--text-hi) !important; }
+
+        @media (max-width: 640px) {
+          .header-nav, .header-login-link { display: none !important; }
+        }
+
+        .eyebrow-dark {
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--lime);
+        }
+
+        .anim-fade-up-dark { animation: fade-up 0.6s var(--ease-out-quint) both; }
+        .anim-delay-dark-1 { animation-delay: 80ms; }
+        .anim-delay-dark-2 { animation-delay: 160ms; }
+        .anim-delay-dark-3 { animation-delay: 240ms; }
+        .anim-delay-dark-4 { animation-delay: 320ms; }
+        .anim-delay-dark-5 { animation-delay: 400ms; }
+
+        @keyframes glow-breathe {
+          0%, 100% { opacity: 0.55; transform: scale(1); }
+          50%      { opacity: 0.85; transform: scale(1.08); }
+        }
+        .anim-glow { animation: glow-breathe 9s ease-in-out infinite; }
+
+        @keyframes card-float {
+          0%, 100% { transform: rotate(var(--rot, 0deg)) translateY(0); }
+          50%      { transform: rotate(var(--rot, 0deg)) translateY(-10px); }
+        }
+        .anim-float-card { animation: card-float 6.5s ease-in-out infinite; }
+
+        @keyframes sparkle-pulse {
+          0%, 100% { opacity: 0.35; transform: scale(0.9); }
+          50%      { opacity: 1; transform: scale(1.1); }
+        }
+        .anim-sparkle { animation: sparkle-pulse 3.2s ease-in-out infinite; }
       `}</style>
     </div>
   );

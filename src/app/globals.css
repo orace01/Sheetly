@@ -19,6 +19,16 @@
   --text-muted:  #6b8f7c;
   --text-light:  #9abfac;
 
+  /* Dark theme – landing page hero/marketing sections only; the app
+     dashboard stays on the light palette above. */
+  --ink:        #05130d;   /* near-black page background            */
+  --ink-mid:    #081b13;   /* alternating section background        */
+  --line:       rgba(255,255,255,0.10);
+  --line-soft:  rgba(255,255,255,0.06);
+  --text-hi:        #f4fbf7;
+  --text-hi-mid:    rgba(244,251,247,0.72);
+  --text-hi-muted:  rgba(244,251,247,0.45);
+
   /* Aliases consumed by Tailwind inline */
   --background: var(--mint-bg);
   --foreground: var(--text-dark);
@@ -134,6 +144,27 @@ body {
 }
 .btn-ghost:active { transform: translateY(0); }
 
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.375rem;
+  background: transparent;
+  color: var(--text-hi);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 99px;
+  border: 1.5px solid var(--line);
+  cursor: pointer;
+  transition: border-color 200ms, background 200ms, transform 150ms var(--ease-out-quint);
+}
+.btn-outline:hover {
+  border-color: var(--lime);
+  background: rgba(61, 220, 132, 0.08);
+  transform: translateY(-1px);
+}
+.btn-outline:active { transform: translateY(0); }
+
 /* Form inputs */
 .input-field {
   width: 100%;
@@ -175,6 +206,16 @@ body {
 }
 .card:hover {
   box-shadow: 0 4px 20px rgba(11, 61, 46, 0.08);
+}
+
+.card-dark {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line-soft);
+  border-radius: 1.125rem;
+  transition: border-color 200ms var(--ease-out-quint);
+}
+.card-dark:hover {
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 /* ─── Animations ──────────────────────────────────────────────── */
