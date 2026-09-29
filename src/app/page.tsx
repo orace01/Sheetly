@@ -234,7 +234,7 @@ export default function Home() {
             style={{
               maxWidth: 1200,
               margin: "0 auto",
-              padding: "1.75rem 1.5rem 0",
+              padding: "1.75rem 3rem 0",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -272,7 +272,7 @@ export default function Home() {
             zIndex: 2,
             maxWidth: 1200,
             margin: "0 auto",
-            padding: "5.5rem 1.5rem 0",
+            padding: "5.5rem 3rem 0",
             display: "flex",
             alignItems: "center",
             gap: "2.5rem",
@@ -451,7 +451,7 @@ export default function Home() {
         {/* stats bar, overlapping the bottom edge */}
         <div
           className="anim-fade-up-dark anim-delay-dark-5"
-          style={{ position: "relative", zIndex: 3, maxWidth: 940, margin: "4.5rem auto 0", padding: "0 1.5rem" }}
+          style={{ position: "relative", zIndex: 3, maxWidth: 940, margin: "4.5rem auto 0", padding: "0 3rem" }}
         >
           <div
             style={{
@@ -477,7 +477,7 @@ export default function Home() {
 
       <main style={{ flex: 1 }}>
         {/* ── FEATURES ──────────────────────────────────────────── */}
-        <section id="features" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem 5.5rem" }}>
+        <section id="features" style={{ background: "var(--ink-mid)", padding: "6.25rem 3rem 5.5rem" }}>
           <div style={{ maxWidth: 1200, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
@@ -527,7 +527,7 @@ export default function Home() {
         </section>
 
         {/* ── PERSONNALISEZ VOTRE EXPORT ─────────────────────────── */}
-        <section style={{ background: "var(--ink)", padding: "6.25rem 1.5rem", position: "relative", overflow: "hidden" }}>
+        <section style={{ background: "var(--ink)", padding: "6.25rem 3rem", position: "relative", overflow: "hidden" }}>
           <Sparkle style={{ top: 60, right: "18%", left: "auto", width: 14, height: 14 }} />
           <Sparkle style={{ bottom: 80, right: "6%", left: "auto", width: 10, height: 10 }} delay="1.4s" />
 
@@ -630,7 +630,7 @@ export default function Home() {
         </section>
 
         {/* ── PRICING ───────────────────────────────────────────── */}
-        <section id="pricing" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem" }}>
+        <section id="pricing" style={{ background: "var(--ink-mid)", padding: "6.25rem 3rem" }}>
           <div style={{ maxWidth: 1024, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
@@ -738,7 +738,7 @@ export default function Home() {
         </section>
 
         {/* ── FAQ ───────────────────────────────────────────────── */}
-        <section id="faq" style={{ background: "var(--ink)", padding: "6.25rem 1.5rem" }}>
+        <section id="faq" style={{ background: "var(--ink)", padding: "6.25rem 3rem" }}>
           <div style={{ maxWidth: 700, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
@@ -774,7 +774,7 @@ export default function Home() {
         <section
           style={{
             background: "linear-gradient(160deg, #0d2a1e 0%, var(--ink) 70%)",
-            padding: "6.875rem 1.5rem",
+            padding: "6.875rem 3rem",
             textAlign: "center",
             position: "relative",
             overflow: "hidden",
@@ -811,7 +811,7 @@ export default function Home() {
       </main>
 
       {/* ── FOOTER ────────────────────────────────────────────────── */}
-      <footer style={{ background: "var(--ink)", borderTop: "1px solid var(--line)", padding: "2.5rem 1.5rem", textAlign: "center" }}>
+      <footer style={{ background: "var(--ink)", borderTop: "1px solid var(--line)", padding: "2.5rem 3rem", textAlign: "center" }}>
         <nav style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1.75rem", marginBottom: "1.125rem" }}>
           <Link href="#pricing" className="nav-link-dark">
             Tarifs
@@ -839,7 +839,7 @@ export default function Home() {
         }
         .nav-link-dark:hover { color: var(--text-hi) !important; }
 
-        .landing-zoom { zoom: 1.5; }
+        .landing-zoom { zoom: 1.35; }
 
         @media (max-width: 1280px) {
           .landing-zoom { zoom: 1; }
