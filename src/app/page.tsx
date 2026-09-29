@@ -232,7 +232,7 @@ export default function Home() {
         <header style={{ position: "relative", zIndex: 2 }}>
           <div
             style={{
-              maxWidth: 1200,
+              maxWidth: 1320,
               margin: "0 auto",
               padding: "1.75rem 1.5rem 0",
               display: "flex",
@@ -270,7 +270,7 @@ export default function Home() {
           style={{
             position: "relative",
             zIndex: 2,
-            maxWidth: 1200,
+            maxWidth: 1320,
             margin: "0 auto",
             padding: "5.5rem 1.5rem 0",
             display: "flex",
@@ -451,7 +451,7 @@ export default function Home() {
         {/* stats bar, overlapping the bottom edge */}
         <div
           className="anim-fade-up-dark anim-delay-dark-5"
-          style={{ position: "relative", zIndex: 3, maxWidth: 940, margin: "4.5rem auto 0", padding: "0 1.5rem" }}
+          style={{ position: "relative", zIndex: 3, maxWidth: 1040, margin: "4.5rem auto 0", padding: "0 1.5rem" }}
         >
           <div
             style={{
@@ -478,7 +478,7 @@ export default function Home() {
       <main style={{ flex: 1 }}>
         {/* ── FEATURES ──────────────────────────────────────────── */}
         <section id="features" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem 5.5rem" }}>
-          <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ maxWidth: 1320, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Fonctionnalités
@@ -525,7 +525,7 @@ export default function Home() {
           <Sparkle style={{ top: 60, right: "18%", left: "auto", width: 14, height: 14 }} />
           <Sparkle style={{ bottom: 80, right: "6%", left: "auto", width: 10, height: 10 }} delay="1.4s" />
 
-          <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: "3rem", flexWrap: "wrap" }}>
+          <div style={{ maxWidth: 1320, margin: "0 auto", display: "flex", alignItems: "center", gap: "3rem", flexWrap: "wrap" }}>
             <div className="anim-fade-up-dark" style={{ flex: "1 1 420px", minWidth: 300 }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Export sur mesure
@@ -625,7 +625,7 @@ export default function Home() {
 
         {/* ── PRICING ───────────────────────────────────────────── */}
         <section id="pricing" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem" }}>
-          <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+          <div style={{ maxWidth: 1120, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Tarifs
@@ -727,7 +727,7 @@ export default function Home() {
 
         {/* ── FAQ ───────────────────────────────────────────────── */}
         <section id="faq" style={{ background: "var(--ink)", padding: "6.25rem 1.5rem" }}>
-          <div style={{ maxWidth: 700, margin: "0 auto" }}>
+          <div style={{ maxWidth: 760, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 FAQ
