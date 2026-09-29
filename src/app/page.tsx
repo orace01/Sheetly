@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { PLAN_DETAILS, OVERAGE_PRICE_USD_PER_DOC, type PlanKey } from "@/lib/constants";
+import { Reveal } from "@/components/Reveal";
+import { FaqAccordion } from "@/components/FaqAccordion";
 
 function FeatureIcon({ path }: { path: ReactNode }) {
   return (
@@ -489,14 +491,16 @@ export default function Home() {
           <Sparkle style={{ top: 48, right: "22%", left: "auto", width: 14, height: 14 }} delay="0.6s" />
           <Sparkle style={{ bottom: 64, left: "6%", width: 10, height: 10 }} delay="2s" />
           <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
-            <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
-                Fonctionnalités
+            <Reveal>
+              <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+                <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
+                  Fonctionnalités
+                </div>
+                <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
+                  Le goulot d&apos;étranglement des pièces comptables, résolu
+                </h2>
               </div>
-              <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
-                Le goulot d&apos;étranglement des pièces comptables, résolu
-              </h2>
-            </div>
+            </Reveal>
 
             <div
               style={{
@@ -506,31 +510,29 @@ export default function Home() {
               }}
             >
               {FEATURES.map((feature, i) => (
-                <div
-                  key={feature.title}
-                  className={`card-dark anim-fade-up-dark anim-delay-dark-${Math.min(i + 1, 5)}`}
-                  style={{ padding: "1.75rem" }}
-                >
-                  <div
-                    style={{
-                      width: 46,
-                      height: 46,
-                      borderRadius: 12,
-                      background: "rgba(61,220,132,0.10)",
-                      border: "1px solid rgba(61,220,132,0.22)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: "1.125rem",
-                    }}
-                  >
-                    {feature.icon}
+                <Reveal key={feature.title} delay={Math.min(i, 4) * 80}>
+                  <div className="card-dark" style={{ padding: "1.75rem", height: "100%" }}>
+                    <div
+                      style={{
+                        width: 46,
+                        height: 46,
+                        borderRadius: 12,
+                        background: "rgba(61,220,132,0.10)",
+                        border: "1px solid rgba(61,220,132,0.22)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "1.125rem",
+                      }}
+                    >
+                      {feature.icon}
+                    </div>
+                    <h3 style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text-hi)", marginBottom: "0.5rem" }}>
+                      {feature.title}
+                    </h3>
+                    <p style={{ fontSize: "0.875rem", color: "var(--text-hi-mid)", lineHeight: 1.6 }}>{feature.description}</p>
                   </div>
-                  <h3 style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text-hi)", marginBottom: "0.5rem" }}>
-                    {feature.title}
-                  </h3>
-                  <p style={{ fontSize: "0.875rem", color: "var(--text-hi-mid)", lineHeight: 1.6 }}>{feature.description}</p>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -549,7 +551,7 @@ export default function Home() {
           <Sparkle style={{ bottom: 80, right: "6%", left: "auto", width: 10, height: 10 }} delay="1.4s" />
 
           <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: "3rem", flexWrap: "wrap" }}>
-            <div className="anim-fade-up-dark" style={{ flex: "1 1 420px", minWidth: 300 }}>
+            <Reveal style={{ flex: "1 1 420px", minWidth: 300 }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Export sur mesure
               </div>
@@ -563,9 +565,9 @@ export default function Home() {
               <Link href="/export" className="btn-lime">
                 Créer un modèle →
               </Link>
-            </div>
+            </Reveal>
 
-            <div className="anim-fade-up-dark anim-delay-dark-2" style={{ flex: "1 1 380px", minWidth: 300, position: "relative", height: 300 }}>
+            <Reveal delay={120} style={{ flex: "1 1 380px", minWidth: 300, position: "relative", height: 300 }}>
               <div
                 className="anim-float-card"
                 style={{
@@ -642,7 +644,7 @@ export default function Home() {
                   <div style={{ width: "55%", height: 5, borderRadius: 3, background: "rgba(255,255,255,0.20)" }} />
                 </div>
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
 
@@ -659,18 +661,20 @@ export default function Home() {
           <Sparkle style={{ top: 40, left: "12%", width: 12, height: 12 }} delay="0.9s" />
           <Sparkle style={{ bottom: 56, right: "10%", left: "auto", width: 14, height: 14 }} delay="2.3s" />
           <div style={{ maxWidth: 1024, margin: "0 auto", position: "relative" }}>
-            <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
-                Tarifs
+            <Reveal>
+              <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+                <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
+                  Tarifs
+                </div>
+                <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)", marginBottom: "0.875rem" }}>
+                  Tarifs simples, sans surprise
+                </h2>
+                <p style={{ fontSize: "0.875rem", color: "var(--text-hi-muted)" }}>
+                  Au-delà du forfait, chaque document supplémentaire est facturé{" "}
+                  <strong style={{ color: "var(--text-hi-mid)" }}>{OVERAGE_PRICE_USD_PER_DOC.toFixed(2)} $</strong>.
+                </p>
               </div>
-              <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)", marginBottom: "0.875rem" }}>
-                Tarifs simples, sans surprise
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "var(--text-hi-muted)" }}>
-                Au-delà du forfait, chaque document supplémentaire est facturé{" "}
-                <strong style={{ color: "var(--text-hi-mid)" }}>{OVERAGE_PRICE_USD_PER_DOC.toFixed(2)} $</strong>.
-              </p>
-            </div>
+            </Reveal>
 
             <div
               style={{
@@ -683,9 +687,9 @@ export default function Home() {
                 const plan = PLAN_DETAILS[key];
                 const isHighlight = key === "STARTER";
                 return (
+                  <Reveal key={key} delay={i * 100}>
                   <div
-                    key={key}
-                    className={`${isHighlight ? "" : "card-dark "}anim-fade-up-dark anim-delay-dark-${i + 1}`}
+                    className={isHighlight ? "" : "card-dark"}
                     style={
                       isHighlight
                         ? {
@@ -758,6 +762,7 @@ export default function Home() {
                       Choisir ce plan
                     </Link>
                   </div>
+                  </Reveal>
                 );
               })}
             </div>
@@ -776,33 +781,18 @@ export default function Home() {
         >
           <Sparkle style={{ top: 72, left: "8%", width: 12, height: 12 }} delay="1.6s" />
           <div style={{ maxWidth: 700, margin: "0 auto", position: "relative" }}>
-            <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3rem" }}>
-              <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
-                FAQ
-              </div>
-              <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
-                Vos questions, nos réponses
-              </h2>
-            </div>
-
-            <div>
-              {FAQ.map((item, i) => (
-                <div
-                  key={item.question}
-                  className={`anim-fade-up-dark anim-delay-dark-${i + 1}`}
-                  style={{
-                    padding: "1.375rem 0",
-                    borderTop: "1px solid var(--line)",
-                    borderBottom: i === FAQ.length - 1 ? "1px solid var(--line)" : undefined,
-                  }}
-                >
-                  <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-hi)", marginBottom: "0.5rem" }}>
-                    {item.question}
-                  </h3>
-                  <p style={{ fontSize: "0.875rem", color: "var(--text-hi-mid)", lineHeight: 1.6 }}>{item.answer}</p>
+            <Reveal>
+              <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+                <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
+                  FAQ
                 </div>
-              ))}
-            </div>
+                <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
+                  Vos questions, nos réponses
+                </h2>
+              </div>
+            </Reveal>
+
+            <FaqAccordion items={FAQ} />
           </div>
         </section>
 
@@ -831,7 +821,7 @@ export default function Home() {
               pointerEvents: "none",
             }}
           />
-          <div className="anim-fade-up-dark" style={{ position: "relative" }}>
+          <Reveal style={{ position: "relative" }}>
             <h2 style={{ fontSize: "clamp(1.5rem, 3.5vw, 1.875rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)", marginBottom: "0.75rem" }}>
               Prêt à ne plus ressaisir vos factures à la main ?
             </h2>
@@ -842,7 +832,7 @@ export default function Home() {
             <Link href="/register" className="btn-lime">
               Commencer gratuitement →
             </Link>
-          </div>
+          </Reveal>
         </section>
       </main>
 
