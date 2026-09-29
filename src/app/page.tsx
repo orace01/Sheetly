@@ -232,6 +232,7 @@ export default function Home() {
         <header style={{ position: "relative", zIndex: 2 }}>
           <div
             style={{
+              maxWidth: 1200,
               margin: "0 auto",
               padding: "1.75rem 1.5rem 0",
               display: "flex",
@@ -269,17 +270,17 @@ export default function Home() {
           style={{
             position: "relative",
             zIndex: 2,
+            maxWidth: 1200,
             margin: "0 auto",
             padding: "5.5rem 1.5rem 0",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
             gap: "2.5rem",
             flexWrap: "wrap",
           }}
         >
           {/* left: copy */}
-          <div style={{ flex: "1 1 460px", minWidth: 320, maxWidth: 620 }}>
+          <div style={{ flex: "1 1 460px", minWidth: 320 }}>
             <h1
               className="anim-fade-up-dark"
               style={{
@@ -342,7 +343,7 @@ export default function Home() {
           {/* right: document card stack */}
           <div
             className="anim-fade-up-dark anim-delay-dark-4"
-            style={{ flex: "1 1 380px", minWidth: 300, maxWidth: 480, position: "relative", height: 380 }}
+            style={{ flex: "1 1 380px", minWidth: 300, position: "relative", height: 380 }}
           >
             {/* back card: raw document */}
             <div
@@ -450,7 +451,7 @@ export default function Home() {
         {/* stats bar, overlapping the bottom edge */}
         <div
           className="anim-fade-up-dark anim-delay-dark-5"
-          style={{ position: "relative", zIndex: 3, maxWidth: 1040, margin: "4.5rem auto 0", padding: "0 1.5rem" }}
+          style={{ position: "relative", zIndex: 3, maxWidth: 940, margin: "4.5rem auto 0", padding: "0 1.5rem" }}
         >
           <div
             style={{
@@ -477,7 +478,7 @@ export default function Home() {
       <main style={{ flex: 1 }}>
         {/* ── FEATURES ──────────────────────────────────────────── */}
         <section id="features" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem 5.5rem" }}>
-          <div style={{ margin: "0 auto" }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Fonctionnalités
@@ -490,8 +491,7 @@ export default function Home() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 380px))",
-                justifyContent: "center",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
                 gap: "1.25rem",
               }}
             >
@@ -531,8 +531,8 @@ export default function Home() {
           <Sparkle style={{ top: 60, right: "18%", left: "auto", width: 14, height: 14 }} />
           <Sparkle style={{ bottom: 80, right: "6%", left: "auto", width: 10, height: 10 }} delay="1.4s" />
 
-          <div style={{ margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "3rem", flexWrap: "wrap" }}>
-            <div className="anim-fade-up-dark" style={{ flex: "1 1 420px", minWidth: 300, maxWidth: 560 }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: "3rem", flexWrap: "wrap" }}>
+            <div className="anim-fade-up-dark" style={{ flex: "1 1 420px", minWidth: 300 }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Export sur mesure
               </div>
@@ -548,7 +548,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="anim-fade-up-dark anim-delay-dark-2" style={{ flex: "1 1 380px", minWidth: 300, maxWidth: 460, position: "relative", height: 300 }}>
+            <div className="anim-fade-up-dark anim-delay-dark-2" style={{ flex: "1 1 380px", minWidth: 300, position: "relative", height: 300 }}>
               <div
                 className="anim-float-card"
                 style={{
@@ -631,7 +631,7 @@ export default function Home() {
 
         {/* ── PRICING ───────────────────────────────────────────── */}
         <section id="pricing" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem" }}>
-          <div style={{ margin: "0 auto" }}>
+          <div style={{ maxWidth: 1024, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Tarifs
@@ -648,8 +648,7 @@ export default function Home() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 400px))",
-                justifyContent: "center",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
                 gap: "1.25rem",
               }}
             >
@@ -740,7 +739,7 @@ export default function Home() {
 
         {/* ── FAQ ───────────────────────────────────────────────── */}
         <section id="faq" style={{ background: "var(--ink)", padding: "6.25rem 1.5rem" }}>
-          <div style={{ maxWidth: 760, margin: "0 auto" }}>
+          <div style={{ maxWidth: 700, margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 FAQ
