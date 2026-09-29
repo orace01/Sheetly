@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { PLAN_DETAILS, OVERAGE_PRICE_USD_PER_DOC, type PlanKey } from "@/lib/constants";
 import { Reveal } from "@/components/Reveal";
 import { FaqAccordion } from "@/components/FaqAccordion";
+import { CountUp } from "@/components/CountUp";
 
 function FeatureIcon({ path }: { path: ReactNode }) {
   return (
@@ -160,11 +161,46 @@ const FAQ: { question: string; answer: string }[] = [
 
 const PLAN_ORDER: PlanKey[] = ["FREE", "STARTER", "CABINET"];
 
-const STATS: { value: string; label: string }[] = [
-  { value: String(PLAN_DETAILS.FREE.docsIncluded), label: "Documents gratuits" },
-  { value: "4", label: "Formats acceptés" },
-  { value: "30s", label: "Par document" },
-  { value: String(PLAN_ORDER.length), label: "Formules tarifaires" },
+const STATS: { value: number; suffix?: string; label: string }[] = [
+  { value: PLAN_DETAILS.FREE.docsIncluded, label: "Documents gratuits" },
+  { value: 4, label: "Formats acceptés" },
+  { value: 30, suffix: "s", label: "Par document" },
+  { value: PLAN_ORDER.length, label: "Formules tarifaires" },
+];
+
+const HOW_IT_WORKS: { title: string; description: string }[] = [
+  {
+    title: "Déposez vos documents",
+    description:
+      "Glissez un lot de factures, reçus, relevés bancaires ou un dossier .zip. Aucun tri préalable requis.",
+  },
+  {
+    title: "Vérifiez en un coup d'œil",
+    description:
+      "L'écran split-screen affiche le document et les champs extraits côte à côte, avec contrôle HT+TVA=TTC automatique.",
+  },
+  {
+    title: "Exportez votre Excel",
+    description:
+      "Un clic génère un fichier XLSX ou CSV structuré, prêt à importer dans votre logiciel comptable.",
+  },
+];
+
+const AUDIENCES: { title: string; description: string }[] = [
+  {
+    title: "Indépendants & freelances",
+    description: "Fini les soirées à ressaisir vos factures. Glissez, vérifiez, exportez — et reprenez votre travail.",
+  },
+  {
+    title: "TPE & PME",
+    description:
+      "Centralisez les factures de toute l'équipe et gardez une piste claire de chaque dépense, sans changer d'outil comptable.",
+  },
+  {
+    title: "Cabinets comptables",
+    description:
+      "Traitez les documents de plusieurs clients en parallèle, avec des mappings de comptes qui s'affinent au fil des dossiers.",
+  },
 ];
 
 export default function Home() {
@@ -469,7 +505,9 @@ export default function Home() {
           >
             {STATS.map((stat, i) => (
               <div key={stat.label} style={{ borderRight: i < STATS.length - 1 ? "1px solid var(--line)" : undefined }}>
-                <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text-hi)" }}>{stat.value}</div>
+                <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text-hi)" }}>
+                  <CountUp value={stat.value} suffix={stat.suffix} />
+                </div>
                 <div style={{ fontSize: "0.75rem", color: "var(--text-hi-muted)", marginTop: 4 }}>{stat.label}</div>
               </div>
             ))}
@@ -478,6 +516,143 @@ export default function Home() {
       </section>
 
       <main style={{ flex: 1 }}>
+        {/* ── COMMENT ÇA MARCHE ─────────────────────────────────── */}
+        <section
+          style={{
+            background: "radial-gradient(130% 100% at 85% 0%, #0e2419 0%, var(--ink) 55%)",
+            padding: "6.25rem 3rem",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <Sparkle style={{ top: 52, left: "10%", width: 12, height: 12 }} delay="0.4s" />
+          <Sparkle style={{ bottom: 96, right: "8%", left: "auto", width: 14, height: 14 }} delay="1.9s" />
+          <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
+            <Reveal>
+              <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+                <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
+                  Comment ça marche
+                </div>
+                <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
+                  De la facture à l&apos;Excel, en trois étapes
+                </h2>
+              </div>
+            </Reveal>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.25rem", marginBottom: "3.5rem" }}>
+              {HOW_IT_WORKS.map((step, i) => (
+                <Reveal key={step.title} delay={i * 100}>
+                  <div className="card-dark" style={{ padding: "1.75rem", height: "100%" }}>
+                    <div
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 12,
+                        background: "rgba(61,220,132,0.10)",
+                        border: "1px solid rgba(61,220,132,0.22)",
+                        color: "var(--lime)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "1.125rem",
+                        fontWeight: 700,
+                        marginBottom: "1.125rem",
+                      }}
+                    >
+                      {i + 1}
+                    </div>
+                    <h3 style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text-hi)", marginBottom: "0.5rem" }}>{step.title}</h3>
+                    <p style={{ fontSize: "0.875rem", color: "var(--text-hi-mid)", lineHeight: 1.6 }}>{step.description}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+
+            {/* Avant / après */}
+            <Reveal delay={150}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1.75rem", flexWrap: "wrap" }}>
+                <div className="card-dark" style={{ width: 260, padding: "1.5rem", flexShrink: 0 }}>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      fontSize: "0.6875rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.06em",
+                      color: "var(--text-hi-muted)",
+                      background: "rgba(255,255,255,0.06)",
+                      padding: "3px 10px",
+                      borderRadius: 99,
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    AVANT
+                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                    <div style={{ width: "80%", height: 6, borderRadius: 3, background: "rgba(255,255,255,0.10)" }} />
+                    <div style={{ width: "55%", height: 6, borderRadius: 3, background: "rgba(255,255,255,0.10)" }} />
+                    <div style={{ width: "70%", height: 6, borderRadius: 3, background: "rgba(255,255,255,0.10)" }} />
+                    <div style={{ marginTop: "0.5rem", width: "40%", height: 6, borderRadius: 3, background: "#3a1f1f" }} />
+                    <div style={{ width: "60%", height: 6, borderRadius: 3, background: "rgba(255,255,255,0.10)" }} />
+                  </div>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-hi-muted)", marginTop: "1rem", marginBottom: 0 }}>
+                    Facture PDF brute, non structurée
+                  </p>
+                </div>
+
+                <svg
+                  aria-hidden
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--lime)"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ flexShrink: 0 }}
+                >
+                  <line x1="4" y1="12" x2="18" y2="12" />
+                  <polyline points="12 6 18 12 12 18" />
+                </svg>
+
+                <div className="card-dark" style={{ flex: "1 1 420px", maxWidth: 520, overflow: "hidden" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "0.75rem 1.25rem",
+                      background: "rgba(61,220,132,0.08)",
+                      borderBottom: "1px solid var(--line-soft)",
+                    }}
+                  >
+                    <span style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--lime)" }}>APRÈS</span>
+                    <span style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--text-hi-muted)" }}>EXPORT.XLSX</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1.4fr 0.9fr 0.9fr 0.6fr", gap: "0.5rem", padding: "0.625rem 1.25rem", fontSize: "0.6875rem", fontWeight: 700, color: "var(--text-hi-muted)", letterSpacing: "0.03em" }}>
+                    <span>FOURNISSEUR</span>
+                    <span>DATE</span>
+                    <span>MONTANT TTC</span>
+                    <span>CODE</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1.4fr 0.9fr 0.9fr 0.6fr", gap: "0.5rem", padding: "0.625rem 1.25rem", fontSize: "0.8125rem", color: "var(--text-hi)", borderTop: "1px solid var(--line-soft)" }}>
+                    <span style={{ fontWeight: 600 }}>EDF Entreprises</span>
+                    <span style={{ color: "var(--text-hi-mid)" }}>12/03/2024</span>
+                    <span>1 284,50 €</span>
+                    <span className="code-chip-dark">606</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1.4fr 0.9fr 0.9fr 0.6fr", gap: "0.5rem", padding: "0.625rem 1.25rem", fontSize: "0.8125rem", color: "var(--text-hi)", borderTop: "1px solid var(--line-soft)" }}>
+                    <span style={{ fontWeight: 600 }}>SportFlex SARL</span>
+                    <span style={{ color: "var(--text-hi-mid)" }}>08/03/2024</span>
+                    <span>342,00 €</span>
+                    <span className="code-chip-dark">622</span>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
         {/* ── FEATURES ──────────────────────────────────────────── */}
         <section
           id="features"
@@ -531,6 +706,43 @@ export default function Home() {
                       {feature.title}
                     </h3>
                     <p style={{ fontSize: "0.875rem", color: "var(--text-hi-mid)", lineHeight: 1.6 }}>{feature.description}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── POUR QUI ? ────────────────────────────────────────── */}
+        <section
+          style={{
+            background: "radial-gradient(130% 100% at 15% 100%, #0e2419 0%, var(--ink) 55%)",
+            padding: "6.25rem 3rem",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <Sparkle style={{ top: 64, right: "14%", left: "auto", width: 12, height: 12 }} delay="1.1s" />
+          <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
+            <Reveal>
+              <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+                <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
+                  Pour qui ?
+                </div>
+                <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.125rem)", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-hi)" }}>
+                  Conçu pour ceux qui traitent des factures au quotidien
+                </h2>
+              </div>
+            </Reveal>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem" }}>
+              {AUDIENCES.map((audience, i) => (
+                <Reveal key={audience.title} delay={i * 100}>
+                  <div className="card-dark" style={{ padding: "1.75rem", height: "100%" }}>
+                    <h3 style={{ fontWeight: 600, fontSize: "1.0625rem", color: "var(--text-hi)", marginBottom: "0.625rem" }}>
+                      {audience.title}
+                    </h3>
+                    <p style={{ fontSize: "0.875rem", color: "var(--text-hi-mid)", lineHeight: 1.6 }}>{audience.description}</p>
                   </div>
                 </Reveal>
               ))}
