@@ -233,7 +233,7 @@ export default function Home() {
           <div
             style={{
               margin: "0 auto",
-              padding: "1.75rem 3rem 0",
+              padding: "1.75rem 1.5rem 0",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -270,7 +270,7 @@ export default function Home() {
             position: "relative",
             zIndex: 2,
             margin: "0 auto",
-            padding: "5.5rem 3rem 0",
+            padding: "5.5rem 1.5rem 0",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -476,7 +476,7 @@ export default function Home() {
 
       <main style={{ flex: 1 }}>
         {/* ── FEATURES ──────────────────────────────────────────── */}
-        <section id="features" style={{ background: "var(--ink-mid)", padding: "6.25rem 3rem 5.5rem" }}>
+        <section id="features" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem 5.5rem" }}>
           <div style={{ margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
@@ -527,7 +527,7 @@ export default function Home() {
         </section>
 
         {/* ── PERSONNALISEZ VOTRE EXPORT ─────────────────────────── */}
-        <section style={{ background: "var(--ink)", padding: "6.25rem 3rem", position: "relative", overflow: "hidden" }}>
+        <section style={{ background: "var(--ink)", padding: "6.25rem 1.5rem", position: "relative", overflow: "hidden" }}>
           <Sparkle style={{ top: 60, right: "18%", left: "auto", width: 14, height: 14 }} />
           <Sparkle style={{ bottom: 80, right: "6%", left: "auto", width: 10, height: 10 }} delay="1.4s" />
 
@@ -630,7 +630,7 @@ export default function Home() {
         </section>
 
         {/* ── PRICING ───────────────────────────────────────────── */}
-        <section id="pricing" style={{ background: "var(--ink-mid)", padding: "6.25rem 3rem" }}>
+        <section id="pricing" style={{ background: "var(--ink-mid)", padding: "6.25rem 1.5rem" }}>
           <div style={{ margin: "0 auto" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
