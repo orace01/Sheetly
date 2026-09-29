@@ -839,7 +839,7 @@ export default function Home() {
         }
         .nav-link-dark:hover { color: var(--text-hi) !important; }
 
-        .landing-zoom { zoom: 2; }
+        .landing-zoom { zoom: 1.5; }
 
         @media (max-width: 1280px) {
           .landing-zoom { zoom: 1; }
