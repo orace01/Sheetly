@@ -167,7 +167,7 @@ const STATS: { value: string; label: string }[] = [
 
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col landing-zoom" style={{ background: "var(--ink)" }}>
+    <div className="flex flex-1 flex-col landing-zoom" style={{ background: "var(--ink)", position: "relative" }}>
       {/* ── HEADER + HERO (shared dark canvas) ── */}
       <section
         style={{
@@ -477,8 +477,18 @@ export default function Home() {
 
       <main style={{ flex: 1 }}>
         {/* ── FEATURES ──────────────────────────────────────────── */}
-        <section id="features" style={{ background: "var(--ink-mid)", padding: "6.25rem 3rem 5.5rem" }}>
-          <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <section
+          id="features"
+          style={{
+            background: "radial-gradient(130% 100% at 12% 0%, #0e2419 0%, var(--ink-mid) 55%)",
+            padding: "6.25rem 3rem 5.5rem",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <Sparkle style={{ top: 48, right: "22%", left: "auto", width: 14, height: 14 }} delay="0.6s" />
+          <Sparkle style={{ bottom: 64, left: "6%", width: 10, height: 10 }} delay="2s" />
+          <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Fonctionnalités
@@ -527,7 +537,14 @@ export default function Home() {
         </section>
 
         {/* ── PERSONNALISEZ VOTRE EXPORT ─────────────────────────── */}
-        <section style={{ background: "var(--ink)", padding: "6.25rem 3rem", position: "relative", overflow: "hidden" }}>
+        <section
+          style={{
+            background: "radial-gradient(120% 100% at 88% 100%, #0e2419 0%, var(--ink) 55%)",
+            padding: "6.25rem 3rem",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
           <Sparkle style={{ top: 60, right: "18%", left: "auto", width: 14, height: 14 }} />
           <Sparkle style={{ bottom: 80, right: "6%", left: "auto", width: 10, height: 10 }} delay="1.4s" />
 
@@ -630,8 +647,18 @@ export default function Home() {
         </section>
 
         {/* ── PRICING ───────────────────────────────────────────── */}
-        <section id="pricing" style={{ background: "var(--ink-mid)", padding: "6.25rem 3rem" }}>
-          <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+        <section
+          id="pricing"
+          style={{
+            background: "radial-gradient(130% 100% at 50% 0%, #0e2419 0%, var(--ink-mid) 60%)",
+            padding: "6.25rem 3rem",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <Sparkle style={{ top: 40, left: "12%", width: 12, height: 12 }} delay="0.9s" />
+          <Sparkle style={{ bottom: 56, right: "10%", left: "auto", width: 14, height: 14 }} delay="2.3s" />
+          <div style={{ maxWidth: 1024, margin: "0 auto", position: "relative" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3.5rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 Tarifs
@@ -666,7 +693,7 @@ export default function Home() {
                             padding: "2rem",
                             background: "linear-gradient(160deg, #123a2b 0%, #0b241a 100%)",
                             border: "1.5px solid rgba(61,220,132,0.35)",
-                            boxShadow: "0 0 60px rgba(61,220,132,0.08)",
+                            boxShadow: "0 20px 48px rgba(0,0,0,0.35), 0 0 60px rgba(61,220,132,0.1)",
                             position: "relative",
                           }
                         : { padding: "2rem", position: "relative" }
@@ -738,8 +765,17 @@ export default function Home() {
         </section>
 
         {/* ── FAQ ───────────────────────────────────────────────── */}
-        <section id="faq" style={{ background: "var(--ink)", padding: "6.25rem 3rem" }}>
-          <div style={{ maxWidth: 700, margin: "0 auto" }}>
+        <section
+          id="faq"
+          style={{
+            background: "radial-gradient(120% 100% at 50% 100%, #0d211a 0%, var(--ink) 55%)",
+            padding: "6.25rem 3rem",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <Sparkle style={{ top: 72, left: "8%", width: 12, height: 12 }} delay="1.6s" />
+          <div style={{ maxWidth: 700, margin: "0 auto", position: "relative" }}>
             <div className="anim-fade-up-dark" style={{ textAlign: "center", marginBottom: "3rem" }}>
               <div className="eyebrow-dark" style={{ marginBottom: "0.875rem" }}>
                 FAQ
@@ -840,6 +876,17 @@ export default function Home() {
         .nav-link-dark:hover { color: var(--text-hi) !important; }
 
         .landing-zoom { zoom: 1.25; }
+
+        .landing-zoom::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 50;
+          pointer-events: none;
+          opacity: 0.035;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+          background-repeat: repeat;
+        }
 
         @media (max-width: 1280px) {
           .landing-zoom { zoom: 1; }
