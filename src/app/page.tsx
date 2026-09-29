@@ -167,7 +167,7 @@ const STATS: { value: string; label: string }[] = [
 
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col" style={{ background: "var(--ink)" }}>
+    <div className="flex flex-1 flex-col landing-zoom" style={{ background: "var(--ink)" }}>
       {/* ── HEADER + HERO (shared dark canvas) ── */}
       <section
         style={{
@@ -839,7 +839,10 @@ export default function Home() {
         }
         .nav-link-dark:hover { color: var(--text-hi) !important; }
 
-        @media (max-width: 640px) {
+        .landing-zoom { zoom: 2; }
+
+        @media (max-width: 1280px) {
+          .landing-zoom { zoom: 1; }
           .header-nav, .header-login-link { display: none !important; }
         }
 
